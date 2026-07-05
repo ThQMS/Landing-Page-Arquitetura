@@ -150,6 +150,23 @@ function Nav({ theme, toggleTheme }) {
   const [scrolled, setScrolled] = useState(false);
   const [overHero, setOverHero] = useState(true);
   const [open, setOpen] = useState(false);
+  const [active, setActive] = useState("");
+
+  // Scrollspy: destaca no menu a seção que está na tela
+  useEffect(() => {
+    if (!("IntersectionObserver" in window)) return;
+    const secs = ["sobre", "processo", "projetos", "escritos", "contato"]
+      .map((id) => document.getElementById(id))
+      .filter(Boolean);
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => { if (e.isIntersecting) setActive(e.target.id); });
+      },
+      { rootMargin: "-45% 0px -50% 0px", threshold: 0 }
+    );
+    secs.forEach((s) => io.observe(s));
+    return () => io.disconnect();
+  }, []);
 
   useEffect(() => {
     const NAV_H = 68; // altura aprox. da navbar
@@ -186,9 +203,12 @@ function Nav({ theme, toggleTheme }) {
       </a>
 
       <div className="nav-links">
-        {links.map(([href, label]) => (
-          <a key={href} href={href}>{label}</a>
-        ))}
+        {links.map(([href, label]) => {
+          const isActive = active === href.slice(1);
+          return (
+            <a key={href} href={href} className={isActive ? "active" : undefined} aria-current={isActive ? "true" : undefined}>{label}</a>
+          );
+        })}
       </div>
 
       <div className="nav-controls">
@@ -371,6 +391,7 @@ function Carousel() {
   const [paused, setPaused] = useState(false);
   const n = CARROSSEL.length;
   const go = (d) => setI((p) => (p + d + n) % n);
+  const touchX = useRef(null);
 
   // Avanço automático (pausa no hover; respeita "reduzir movimento")
   useEffect(() => {
@@ -380,10 +401,34 @@ function Carousel() {
     return () => clearInterval(t);
   }, [paused, n]);
 
+  // Teclado (setas) e gesto de arrastar (swipe no celular)
+  const onKeyDown = (e) => {
+    if (e.key === "ArrowLeft") go(-1);
+    else if (e.key === "ArrowRight") go(1);
+  };
+  const onTouchStart = (e) => { touchX.current = e.touches[0].clientX; };
+  const onTouchEnd = (e) => {
+    if (touchX.current == null) return;
+    const dx = e.changedTouches[0].clientX - touchX.current;
+    if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
+    touchX.current = null;
+  };
+
   const cur = CARROSSEL[i];
 
   return (
-    <div className="carousel" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+    <div
+      className="carousel"
+      role="group"
+      aria-roledescription="carrossel"
+      aria-label="Projetos"
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
       <div className="carousel-stack">
         {CARROSSEL.map((s, k) => (
           <div className={`carousel-slide ${k === i ? "active" : ""}`} key={k} aria-hidden={k !== i}>
