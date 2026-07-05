@@ -120,6 +120,17 @@ const IconChevron = ({ dir }) => (
     {dir === "left" ? <path d="M15 5L8 12l7 7" /> : <path d="M9 5l7 7-7 7" />}
   </svg>
 );
+const IconSun = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="4" />
+    <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+  </svg>
+);
+const IconMoon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" aria-hidden="true">
+    <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+  </svg>
+);
 
 /* ============================================================
    Ambient glow (fundo fixo)
@@ -182,7 +193,7 @@ function Nav({ theme, toggleTheme }) {
 
       <div className="nav-controls">
         <button className="theme-toggle" onClick={toggleTheme} aria-label="Alternar tema">
-          {theme === "light" ? "☾" : "☀"}
+          {theme === "light" ? <IconMoon /> : <IconSun />}
         </button>
         <button className="nav-burger" onClick={() => setOpen((o) => !o)} aria-label="Menu" aria-expanded={open}>
           <span /><span /><span />
@@ -210,8 +221,9 @@ function Hero() {
 
       <div className="hero-content">
         <div className="hero-credentials">
-          Maria Eduarda Martins <span className="cred-sep">/</span> Arquiteta e Urbanista
-          <span className="cred-sep">/</span> Residencial &amp; Interiores
+          <span className="cred-hide">Maria Eduarda Martins <span className="cred-sep">/</span> </span>
+          Arquiteta e Urbanista
+          <span className="cred-hide"> <span className="cred-sep">/</span> Residencial &amp; Interiores</span>
         </div>
 
         <h1 className="hero-title">
@@ -360,9 +372,10 @@ function Carousel() {
   const n = CARROSSEL.length;
   const go = (d) => setI((p) => (p + d + n) % n);
 
-  // Avanço automático (pausa no hover)
+  // Avanço automático (pausa no hover; respeita "reduzir movimento")
   useEffect(() => {
     if (paused || n < 2) return;
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const t = setInterval(() => setI((p) => (p + 1) % n), 6500);
     return () => clearInterval(t);
   }, [paused, n]);
@@ -376,8 +389,8 @@ function Carousel() {
           <div className={`carousel-slide ${k === i ? "active" : ""}`} key={k} aria-hidden={k !== i}>
             {s.img ? (
               <>
-                <img className="slide-bg" src={s.img} alt="" aria-hidden="true" />
-                <img className="slide-img" src={s.img} alt={s.nome} />
+                <img className="slide-bg" src={s.img} alt="" aria-hidden="true" loading="lazy" decoding="async" />
+                <img className="slide-img" src={s.img} alt={s.nome} loading={k === 0 ? "eager" : "lazy"} decoding="async" />
               </>
             ) : (
               <Placeholder label="PROJETO — EM BREVE" />
