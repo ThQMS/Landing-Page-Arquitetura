@@ -25,7 +25,10 @@ const PROCESSO = [
   { n: "04", nome: "Obra", desc: "Acompanhamento e curadoria de acabamentos, garantindo que o desenho vire realidade com o mesmo cuidado." },
 ];
 
-// Slides do carrossel de projetos (tela cheia, foto inteira).
+// Slides do carrossel de projetos (tela cheia).
+// Por padrão a foto preenche a tela toda (cover). Se uma foto precisar aparecer
+// INTEIRA (sem cortar) — ex.: um retrato/vertical — adicione `fit: "contain"`
+// nesse slide: ela é mostrada por completo, com o fundo desfocado nas bordas.
 // Para publicar: troque/adicione `img` com o caminho da foto real.
 // Slides sem `img` viram placeholder "em breve".
 const CARROSSEL = [
@@ -170,16 +173,22 @@ function Nav({ theme, toggleTheme }) {
 
   useEffect(() => {
     const NAV_H = 68; // altura aprox. da navbar
-    const onScroll = () => {
+    const hero = document.querySelector(".hero"); // resolvido uma vez, não a cada scroll
+    let ticking = false;
+    const update = () => {
+      ticking = false;
       const y = window.scrollY || window.pageYOffset;
       setScrolled(y > 24);
       // Navbar fica "marrom" (over-hero) enquanto QUALQUER parte do hero
       // aparece abaixo dela; vira "branca" só quando o marrom sai da tela.
-      const hero = document.querySelector(".hero");
       const heroBottom = hero ? hero.getBoundingClientRect().bottom : window.innerHeight - NAV_H;
       setOverHero(heroBottom > NAV_H);
     };
-    onScroll();
+    // Throttle por frame: a leitura de layout acontece 1x por frame, não por evento.
+    const onScroll = () => {
+      if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    };
+    update();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -434,8 +443,11 @@ function Carousel() {
           <div className={`carousel-slide ${k === i ? "active" : ""}`} key={k} aria-hidden={k !== i}>
             {s.img ? (
               <>
-                <img className="slide-bg" src={s.img} alt="" aria-hidden="true" loading="lazy" decoding="async" />
-                <img className="slide-img" src={s.img} alt={s.nome} loading={k === 0 ? "eager" : "lazy"} decoding="async" />
+                {/* Fundo desfocado só nos slides "contain" (onde sobram bordas); em cover a foto cobre tudo. */}
+                {s.fit === "contain" && (
+                  <img className="slide-bg" src={s.img} alt="" aria-hidden="true" loading="lazy" decoding="async" />
+                )}
+                <img className={`slide-img${s.fit === "contain" ? " fit-contain" : ""}`} src={s.img} alt={s.nome} loading={k === 0 ? "eager" : "lazy"} decoding="async" />
               </>
             ) : (
               <Placeholder label="PROJETO — EM BREVE" />
