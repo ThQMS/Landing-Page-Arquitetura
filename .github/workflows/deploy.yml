@@ -37,3 +37,8 @@ jobs:
 
       - id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          # O padrao da action e 10 min, e a publicacao vinha estourando esse
+          # limite ainda em "deployment_in_progress" — ou seja, o GitHub estava
+          # processando, so que devagar. 30 min da folga sem travar o workflow.
+          timeout: 1800000
