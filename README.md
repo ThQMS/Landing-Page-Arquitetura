@@ -1,6 +1,6 @@
 # Maria Eduarda Martins — Arquitetura & Interiores
 
-Site de apresentação (landing page) da arquiteta e urbanista **Maria Eduarda Martins**, com foco em projetos residenciais e de interiores em Goiânia e região.
+Site de apresentação (landing page) da arquiteta e urbanista **Maria Eduarda Martins**, com foco em design de interiores e ambientes da saúde (hospitais, clínicas e consultórios) em Anápolis, Goiânia e região. Projetos residenciais são atendidos sob demanda.
 
 **🔗 Site no ar:** https://thqms.github.io/Landing-Page-Arquitetura/
 

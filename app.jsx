@@ -9,28 +9,53 @@ const WA_LINK = `https://api.whatsapp.com/send/?phone=${WHATSAPP}&text=${encodeU
   "Oi, tudo bem? Gostaria de conversar sobre um projeto."
 )}`;
 const INSTAGRAM = "https://www.instagram.com/eduarda.martinsarq";
+const INSTAGRAM_HANDLE = "@eduarda.martinsarq";
 const SUBSTACK = "https://danausarquitetura.substack.com";
+
+/* ------------------------------------------------------------------
+   >>> PREENCHER DEPOIS <<<
+   Basta colar o valor entre as aspas. Enquanto ficar vazio (""), o site
+   mostra o item como "em breve" e NÃO cria um link quebrado.
+   ------------------------------------------------------------------ */
+const EMAIL_PROFISSIONAL = "";   // ex.: "eduarda@danausarquitetura.com.br"
+const EMAIL_DANAUS = "";         // ex.: "contato@danausarquitetura.com.br"
+const FORM_LINK = "";            // ex.: link do Google Forms / Typeform de solicitação de projeto
+
+// Instagram do escritório Danaus. Preencha os DOIS campos (perfil + @).
+// Vazio = o link simplesmente não aparece no rodapé, sem quebrar nada.
+const INSTAGRAM_DANAUS = "";         // ex.: "https://www.instagram.com/danausarquitetura"
+const INSTAGRAM_DANAUS_HANDLE = "";  // ex.: "@danausarquitetura"
 
 // Palavras que giram na faixa (marquee)
 const MARQUEE = [
-  "Residencial", "Interiores", "Reforma", "Consultoria",
-  "Projeto Executivo", "Paisagismo", "Detalhamento", "Luz Natural",
+  "Design de Interiores", "Ambientes da Saúde", "Clínicas", "Consultórios",
+  "Reforma", "Detalhamento", "Luz Natural", "Residencial",
 ];
 
 // Etapas do processo de projeto
 const PROCESSO = [
-  { n: "01", nome: "Escuta", desc: "Entender a rotina, os desejos e as limitações de quem vai viver o espaço. Todo bom projeto começa por uma conversa honesta." },
+  { n: "01", nome: "Escuta", desc: "Entender a rotina, os desejos e as limitações de quem vai usar o espaço todos os dias. Todo bom projeto começa por uma conversa honesta." },
   { n: "02", nome: "Estudo", desc: "Estudo preliminar de layout, fluxos e volumes. Testamos possibilidades antes de decidir — no papel, não na obra." },
-  { n: "03", nome: "Projeto", desc: "Detalhamento executivo, especificações e compatibilizações. Cada decisão registrada para a obra sair sem improviso." },
+  { n: "03", nome: "Entrega", desc: "Você recebe o projeto pronto para executar: plantas, medidas, marcenaria, iluminação e a lista de acabamentos escolhidos. Tudo desenhado e especificado, para a equipe da obra saber exatamente o que fazer." },
   { n: "04", nome: "Obra", desc: "Acompanhamento e curadoria de acabamentos, garantindo que o desenho vire realidade com o mesmo cuidado." },
 ];
 
-// Slides do carrossel de projetos (tela cheia).
-// Por padrão a foto preenche a tela toda (cover). Se uma foto precisar aparecer
-// INTEIRA (sem cortar) — ex.: um retrato/vertical — adicione `fit: "contain"`
-// nesse slide: ela é mostrada por completo, com o fundo desfocado nas bordas.
-// Para publicar: troque/adicione `img` com o caminho da foto real.
-// Slides sem `img` viram placeholder "em breve".
+/* ------------------------------------------------------------------
+   PORTFÓLIO — carrossel de projetos (tela cheia)
+
+   COMO ADICIONAR UM PROJETO NOVO:
+   1) Salve as fotos na pasta `fotos/` (ex.: fotos/josi-01.jpg);
+   2) Copie o modelo abaixo, cole na lista e preencha;
+   3) Renumere o campo `num` ("01", "02", "03"...) na ordem em que aparecem.
+
+     { num: "04", nome: "Nome do projeto", desc: "Uma ou duas frases.", img: "fotos/arquivo.jpg" },
+
+   REGRAS ÚTEIS:
+   • Slide SEM `img` vira automaticamente o cartão "em breve" — serve de reserva.
+   • Por padrão a foto preenche a tela toda (cover). Se ela precisar aparecer
+     INTEIRA, sem cortar (ex.: uma vertical), acrescente `fit: "contain"`:
+     a foto aparece por completo e o fundo das bordas fica desfocado.
+   ------------------------------------------------------------------ */
 const CARROSSEL = [
   {
     num: "01",
@@ -45,11 +70,28 @@ const CARROSSEL = [
     img: "https://substackcdn.com/image/fetch/$s_!ovZ2!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fdae2b184-4d27-4caf-943d-8364074e3bff_960x1280.jpeg",
   },
   {
+    // Reservado para o projeto da Josi — é só acrescentar `img` quando as fotos chegarem.
     num: "03",
+    nome: "Projeto Josi",
+    desc: "Em breve: as fotos deste projeto entram aqui.",
+  },
+  {
+    num: "04",
     nome: "Projeto em breve",
     desc: "Novos trabalhos entram aqui à medida que forem entregues e fotografados.",
   },
 ];
+
+/* ------------------------------------------------------------------
+   RETRATO da profissional (seção Sobre).
+   Quando a foto chegar: salve em `fotos/` e preencha `img` abaixo.
+   Enquanto estiver vazio, aparece o cartão "retrato — em breve".
+   ------------------------------------------------------------------ */
+const RETRATO = {
+  img: "",                                              // ex.: "fotos/eduarda.jpg"
+  alt: "Maria Eduarda Martins, arquiteta e urbanista",
+  legenda: "Maria Eduarda Martins · Arquiteta e Urbanista",
+};
 
 // Artigos reais, puxados do Substack
 const ARTIGOS = [
@@ -116,6 +158,11 @@ const IconWhats = () => (
 const IconInsta = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">
     <rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+  </svg>
+);
+const IconSubstack = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z" />
   </svg>
 );
 const IconChevron = ({ dir }) => (
@@ -208,7 +255,7 @@ function Nav({ theme, toggleTheme }) {
     <nav className={cls}>
       <a className="nav-mark" href="#top" aria-label="Maria Eduarda Martins — início">
         <span className="mark-glyph">M</span>
-        <span className="mark-name">Maria Eduarda<small>Arquitetura &amp; Interiores</small></span>
+        <span className="mark-name">Maria Eduarda<small>Interiores &amp; Ambientes da Saúde</small></span>
       </a>
 
       <div className="nav-links">
@@ -252,7 +299,7 @@ function Hero() {
         <div className="hero-credentials">
           <span className="cred-hide">Maria Eduarda Martins <span className="cred-sep">/</span> </span>
           Arquiteta e Urbanista
-          <span className="cred-hide"> <span className="cred-sep">/</span> Residencial &amp; Interiores</span>
+          <span className="cred-hide"> <span className="cred-sep">/</span> Interiores &amp; Ambientes da Saúde</span>
         </div>
 
         <h1 className="hero-title">
@@ -264,14 +311,14 @@ function Hero() {
         <div className="hero-meta">
           <div>
             <p className="hero-tagline">
-              Projetos residenciais pensados para a vida real — <em>circulação, uso, luz e conforto</em>. A estética vem depois, como consequência.
+              Design de interiores e ambientes da saúde pensados para a vida real — <em>fluxo, uso, luz e conforto</em>. A estética vem depois, como consequência.
             </p>
             <a className="hero-cta" href={WA_LINK} target="_blank" rel="noopener">
               Comece com intenção <span className="arrow" />
             </a>
           </div>
           <div className="hero-aside">
-            <span className="eyebrow">Goiânia · GO</span>
+            <span className="eyebrow">Anápolis · GO</span>
             <div className="scroll-cue">
               <span>Role</span>
               <span className="bar" />
@@ -324,34 +371,39 @@ function Sobre() {
             <h2 className="section-title">Maria Eduarda <em>Martins</em></h2>
           </div>
           <p className="section-lead">
-            Arquiteta e urbanista. Acredito que a beleza é resultado de boas decisões — não o ponto de partida.
+            Arquiteta e urbanista, especialista em design de interiores e ambientes da saúde. Acredito que a beleza é resultado de boas decisões — não o ponto de partida.
           </p>
         </div>
 
         <div className="sobre-grid">
           <div className="sobre-text reveal d1">
             <p className="dropcap">
-              Arquitetura, para mim, começa antes do desenho: começa em entender como uma casa é vivida todos os dias. Onde entra o sol, por onde se caminha, o que se guarda, o que se mostra.
+              Projetar, para mim, começa antes do desenho: começa em entender como um espaço é usado todos os dias. Onde entra o sol, por onde se caminha, o que se guarda, o que se mostra.
             </p>
             <p>
-              Desenvolvo projetos residenciais e de interiores em Goiânia e região. Cada projeto nasce de uma escuta atenta e se traduz em espaços que funcionam — e que, por funcionarem bem, envelhecem bonito.
+              Meu trabalho se concentra em <strong>design de interiores</strong> e em <strong>ambientes da saúde</strong> — hospitais, clínicas e consultórios. São espaços que exigem duas coisas ao mesmo tempo: acolher quem chega e funcionar para quem trabalha ali o dia inteiro. Fluxos, higiene, iluminação e conforto não são detalhes; são o projeto.
+            </p>
+            <p>
+              São cerca de quatro anos de atuação e mais de trinta projetos entregues — autorais e em parceria com outros escritórios —, atendendo Anápolis, Goiânia e região. <em>Projetos residenciais também são desenvolvidos sob demanda</em>: não são o foco principal, mas são bem-vindos quando fazem sentido.
             </p>
             <p>
               <em style={{ color: "var(--cream-2)", fontStyle: "italic" }}>
-                [Este é um texto de exemplo — o bio final entra aqui: formação, anos de atuação e abordagem de trabalho.]
+                [Este é um texto de exemplo — o bio final entra aqui: formação e trajetória.]
               </em>
             </p>
           </div>
 
           <div className="sobre-portrait reveal d2">
-            <Placeholder label="RETRATO — EM BREVE" />
-            <div className="cap">Maria Eduarda Martins · Arquiteta e Urbanista</div>
+            {RETRATO.img
+              ? <img className="portrait-img" src={RETRATO.img} alt={RETRATO.alt} loading="lazy" decoding="async" />
+              : <Placeholder label="RETRATO — EM BREVE" />}
+            <div className="cap">{RETRATO.legenda}</div>
           </div>
 
           <div className="sobre-stats reveal d3">
-            <div className="stat"><div className="num">+8<em>a</em></div><div className="label">Anos de projeto</div></div>
-            <div className="stat"><div className="num">40<em>+</em></div><div className="label">Projetos entregues</div></div>
-            <div className="stat"><div className="num">100%</div><div className="label">Residencial &amp; interiores</div></div>
+            <div className="stat"><div className="num">+4<em>a</em></div><div className="label">Anos de projeto</div></div>
+            <div className="stat"><div className="num">30<em>+</em></div><div className="label">Projetos realizados</div></div>
+            <div className="stat"><div className="num">100%</div><div className="label">Projeto sob medida</div></div>
           </div>
         </div>
       </div>
@@ -494,7 +546,7 @@ function Projetos() {
             <h2 className="section-title">Trabalhos <em>selecionados</em></h2>
           </div>
           <p className="section-lead">
-            Uma seleção de projetos residenciais e de interiores. Novos trabalhos entram aqui à medida que são entregues.
+            Uma seleção de projetos de interiores e de ambientes da saúde — com passagens pelo residencial. Novos trabalhos entram aqui à medida que são entregues.
           </p>
         </div>
       </div>
@@ -554,15 +606,22 @@ function Contato() {
         </div>
         <h2 className="contato-title reveal d1">Vamos conversar<br/>sobre o <em>seu projeto</em>.</h2>
         <p className="contato-lead reveal d2">
-          Conte um pouco sobre o espaço e o momento da sua obra. A primeira conversa é sem compromisso — e diz muito sobre o que dá para fazer.
+          Conte um pouco sobre o espaço e o momento em que ele está. A primeira conversa é sem compromisso — e diz muito sobre o que dá para fazer.
         </p>
 
-        <div className="reveal d2">
+        <div className="contato-actions reveal d2">
           <a className="whatsapp-cta" href={WA_LINK} target="_blank" rel="noopener">
             <span className="wa-badge"><IconWhats /></span>
             Chamar no WhatsApp
             <span className="arrow" />
           </a>
+          {/* Botão do formulário: aparece sozinho assim que FORM_LINK for preenchido lá em cima. */}
+          {FORM_LINK && (
+            <a className="form-cta" href={FORM_LINK} target="_blank" rel="noopener">
+              Solicitar projeto
+              <span className="arrow" />
+            </a>
+          )}
         </div>
 
         <div className="contato-secondary reveal d3">
@@ -572,13 +631,41 @@ function Contato() {
             <div className="block-sub">Resposta rápida, seg–sex</div>
           </div>
           <div className="contato-block">
+            <div className="block-label">Formulário</div>
+            {FORM_LINK
+              ? <a className="block-value" href={FORM_LINK} target="_blank" rel="noopener">Solicitação de projeto</a>
+              : <div className="block-value em-breve">Em breve</div>}
+            <div className="block-sub">Conte o essencial em 2 minutos</div>
+          </div>
+          <div className="contato-block">
+            <div className="block-label">E-mail</div>
+            {EMAIL_PROFISSIONAL
+              ? <a className="block-value" href={`mailto:${EMAIL_PROFISSIONAL}`}>{EMAIL_PROFISSIONAL}</a>
+              : <div className="block-value em-breve">Em breve</div>}
+            <div className="block-sub">Maria Eduarda Martins</div>
+          </div>
+          <div className="contato-block">
+            <div className="block-label">E-mail Danaus</div>
+            {EMAIL_DANAUS
+              ? <a className="block-value" href={`mailto:${EMAIL_DANAUS}`}>{EMAIL_DANAUS}</a>
+              : <div className="block-value em-breve">Em breve</div>}
+            <div className="block-sub">Escritório Danaus Arquitetura</div>
+          </div>
+          <div className="contato-block">
             <div className="block-label">Instagram</div>
-            <a className="block-value" href={INSTAGRAM} target="_blank" rel="noopener">@eduarda.martinsarq</a>
-            <div className="block-sub">Bastidores e projetos</div>
+            <a className="block-value" href={INSTAGRAM} target="_blank" rel="noopener">{INSTAGRAM_HANDLE}</a>
+            {/* Com o perfil da Danaus preenchido, ele entra aqui — sem criar um 7º bloco e desalinhar a grade. */}
+            {INSTAGRAM_DANAUS ? (
+              <div className="block-sub">
+                Escritório: <a href={INSTAGRAM_DANAUS} target="_blank" rel="noopener">{INSTAGRAM_DANAUS_HANDLE}</a>
+              </div>
+            ) : (
+              <div className="block-sub">Bastidores e projetos</div>
+            )}
           </div>
           <div className="contato-block">
             <div className="block-label">Atuação</div>
-            <div className="block-value">Goiânia &amp; região</div>
+            <div className="block-value">Anápolis &amp; Goiânia</div>
             <div className="block-sub">Projetos remotos sob consulta</div>
           </div>
         </div>
@@ -595,13 +682,22 @@ function Footer() {
     <footer className="footer">
       <div className="footer-inner">
         <span className="footer-logo">MARIA EDUARDA MARTINS</span>
-        <span className="footer-mini">© 2026 · Arquitetura &amp; Interiores</span>
+        <span className="footer-mini">© 2026 · Interiores &amp; Ambientes da Saúde</span>
         <div className="footer-social-group">
           <a className="footer-social" href={WA_LINK} target="_blank" rel="noopener" aria-label="WhatsApp">
             <IconWhats /> WhatsApp
           </a>
           <a className="footer-social" href={INSTAGRAM} target="_blank" rel="noopener" aria-label="Instagram">
             <IconInsta /> Instagram
+          </a>
+          {/* Instagram da Danaus: aparece sozinho quando INSTAGRAM_DANAUS for preenchido. */}
+          {INSTAGRAM_DANAUS && (
+            <a className="footer-social" href={INSTAGRAM_DANAUS} target="_blank" rel="noopener" aria-label="Instagram da Danaus Arquitetura">
+              <IconInsta /> Danaus
+            </a>
+          )}
+          <a className="footer-social" href={SUBSTACK} target="_blank" rel="noopener" aria-label="Substack">
+            <IconSubstack /> Substack
           </a>
         </div>
       </div>
