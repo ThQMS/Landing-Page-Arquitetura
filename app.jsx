@@ -21,11 +21,6 @@ const EMAIL_PROFISSIONAL = "";   // ex.: "eduarda@danausarquitetura.com.br"
 const EMAIL_DANAUS = "";         // ex.: "contato@danausarquitetura.com.br"
 const FORM_LINK = "";            // ex.: link do Google Forms / Typeform de solicitação de projeto
 
-// Instagram do escritório Danaus. Preencha os DOIS campos (perfil + @).
-// Vazio = o link simplesmente não aparece no rodapé, sem quebrar nada.
-const INSTAGRAM_DANAUS = "";         // ex.: "https://www.instagram.com/danausarquitetura"
-const INSTAGRAM_DANAUS_HANDLE = "";  // ex.: "@danausarquitetura"
-
 // Palavras que giram na faixa (marquee)
 const MARQUEE = [
   "Design de Interiores", "Ambientes da Saúde", "Clínicas", "Consultórios",
@@ -654,14 +649,7 @@ function Contato() {
           <div className="contato-block">
             <div className="block-label">Instagram</div>
             <a className="block-value" href={INSTAGRAM} target="_blank" rel="noopener">{INSTAGRAM_HANDLE}</a>
-            {/* Com o perfil da Danaus preenchido, ele entra aqui — sem criar um 7º bloco e desalinhar a grade. */}
-            {INSTAGRAM_DANAUS ? (
-              <div className="block-sub">
-                Escritório: <a href={INSTAGRAM_DANAUS} target="_blank" rel="noopener">{INSTAGRAM_DANAUS_HANDLE}</a>
-              </div>
-            ) : (
-              <div className="block-sub">Bastidores e projetos</div>
-            )}
+            <div className="block-sub">Bastidores e projetos</div>
           </div>
           <div className="contato-block">
             <div className="block-label">Atuação</div>
@@ -690,12 +678,6 @@ function Footer() {
           <a className="footer-social" href={INSTAGRAM} target="_blank" rel="noopener" aria-label="Instagram">
             <IconInsta /> Instagram
           </a>
-          {/* Instagram da Danaus: aparece sozinho quando INSTAGRAM_DANAUS for preenchido. */}
-          {INSTAGRAM_DANAUS && (
-            <a className="footer-social" href={INSTAGRAM_DANAUS} target="_blank" rel="noopener" aria-label="Instagram da Danaus Arquitetura">
-              <IconInsta /> Danaus
-            </a>
-          )}
           <a className="footer-social" href={SUBSTACK} target="_blank" rel="noopener" aria-label="Substack">
             <IconSubstack /> Substack
           </a>
