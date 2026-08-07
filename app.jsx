@@ -12,14 +12,8 @@ const INSTAGRAM = "https://www.instagram.com/eduarda.martinsarq";
 const INSTAGRAM_HANDLE = "@eduarda.martinsarq";
 const SUBSTACK = "https://danausarquitetura.substack.com";
 
-/* ------------------------------------------------------------------
-   >>> PREENCHER DEPOIS <<<
-   Basta colar o valor entre as aspas. Enquanto ficar vazio (""), o site
-   mostra o item como "em breve" e NÃO cria um link quebrado.
-   ------------------------------------------------------------------ */
-const EMAIL_PROFISSIONAL = "";   // ex.: "eduarda@danausarquitetura.com.br"
-const EMAIL_DANAUS = "";         // ex.: "contato@danausarquitetura.com.br"
-const FORM_LINK = "";            // ex.: link do Google Forms / Typeform de solicitação de projeto
+const EMAIL_PROFISSIONAL = "dumartins0304@gmail.com";
+const FORM_LINK = "https://pay.kiwify.com.br/45GfLZS";  // link que a cliente usa para receber as solicitações
 
 // Palavras que giram na faixa (marquee)
 const MARQUEE = [
@@ -610,13 +604,10 @@ function Contato() {
             Chamar no WhatsApp
             <span className="arrow" />
           </a>
-          {/* Botão do formulário: aparece sozinho assim que FORM_LINK for preenchido lá em cima. */}
-          {FORM_LINK && (
-            <a className="form-cta" href={FORM_LINK} target="_blank" rel="noopener">
-              Solicitar projeto
-              <span className="arrow" />
-            </a>
-          )}
+          <a className="form-cta" href={FORM_LINK} target="_blank" rel="noopener">
+            Solicitar projeto
+            <span className="arrow" />
+          </a>
         </div>
 
         <div className="contato-secondary reveal d3">
@@ -627,24 +618,13 @@ function Contato() {
           </div>
           <div className="contato-block">
             <div className="block-label">Formulário</div>
-            {FORM_LINK
-              ? <a className="block-value" href={FORM_LINK} target="_blank" rel="noopener">Solicitação de projeto</a>
-              : <div className="block-value em-breve">Em breve</div>}
+            <a className="block-value" href={FORM_LINK} target="_blank" rel="noopener">Solicitação de projeto</a>
             <div className="block-sub">Conte o essencial em 2 minutos</div>
           </div>
           <div className="contato-block">
             <div className="block-label">E-mail</div>
-            {EMAIL_PROFISSIONAL
-              ? <a className="block-value" href={`mailto:${EMAIL_PROFISSIONAL}`}>{EMAIL_PROFISSIONAL}</a>
-              : <div className="block-value em-breve">Em breve</div>}
+            <a className="block-value" href={`mailto:${EMAIL_PROFISSIONAL}`}>{EMAIL_PROFISSIONAL}</a>
             <div className="block-sub">Maria Eduarda Martins</div>
-          </div>
-          <div className="contato-block">
-            <div className="block-label">E-mail Danaus</div>
-            {EMAIL_DANAUS
-              ? <a className="block-value" href={`mailto:${EMAIL_DANAUS}`}>{EMAIL_DANAUS}</a>
-              : <div className="block-value em-breve">Em breve</div>}
-            <div className="block-sub">Escritório Danaus Arquitetura</div>
           </div>
           <div className="contato-block">
             <div className="block-label">Instagram</div>
