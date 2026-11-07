@@ -1033,9 +1033,9 @@ function Contato() {
           </div>
           {FORM_LINK && (
             <div className="contato-block">
-              <div className="block-label">Formulário</div>
-              <a className="block-value" href={FORM_LINK} target="_blank" rel="noopener">Solicitação de projeto</a>
-              <div className="block-sub">Conte o essencial em 2 minutos</div>
+              <div className="block-label">Solicitação</div>
+              <a className="block-value" href={FORM_LINK} target="_blank" rel="noopener">Solicitar projeto</a>
+              <div className="block-sub">Abre em uma nova página</div>
             </div>
           )}
           <div className="contato-block">
