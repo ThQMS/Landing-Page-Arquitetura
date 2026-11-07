@@ -14,8 +14,8 @@ const SUBSTACK = "https://danausarquitetura.substack.com";
 
 const EMAIL_PROFISSIONAL = "dumartins0304@gmail.com";
 // Link do formulário de solicitação de projeto. Vazio = o botão "Solicitar projeto" fica escondido.
-// (O link antigo da Kiwify era de outra coisa — aguardando o link correto.)
-const FORM_LINK = "";
+// Link provisório (Kiwify), a pedido — a cliente disse que é de outra coisa; trocar quando vier o link correto.
+const FORM_LINK = "https://pay.kiwify.com.br/45GfLZS";
 const CAU = "A321508-3";
 const ATENDIMENTO = "Seg. a sex. · 9h às 16h";
 const SLOGAN = "Se você pode sonhar, pode realizar.";

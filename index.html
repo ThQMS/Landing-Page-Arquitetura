@@ -716,6 +716,8 @@ img { display: block; max-width: 100%; }
 .contato-block a.block-value { transition: color 0.3s ease; }
 .contato-block a.block-value:hover { color: var(--champagne); }
 .contato-block .block-sub { margin-top: 6px; font-size: 13px; color: var(--cream-3); }
+/* Quantidade ímpar de blocos: o último ocupa a linha inteira (sem buraco na grade) */
+.contato-secondary > .contato-block:last-child:nth-child(odd) { grid-column: 1 / -1; }
 @media (max-width: 720px) { .contato-secondary { grid-template-columns: 1fr; gap: 28px; } }
 
 /* ------------------------------------------------------------
@@ -1122,6 +1124,6 @@ html.lenis, html.lenis body { height: auto; }
 <!-- Rolagem suave (Lenis 1.0.42, MIT) — auto-hospedado -->
 <script src="vendor/lenis.min.js"></script>
 <!-- App React pré-compilado. FONTE editável: app.jsx → recompilar com: npm run build -->
-<script src="app.js?v=9"></script>
+<script src="app.js?v=10"></script>
 </body>
 </html>
