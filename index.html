@@ -461,14 +461,27 @@ img { display: block; max-width: 100%; }
 .sobre-portrait { position: relative; }
 .sobre-portrait .img-placeholder { aspect-ratio: 4 / 5; }
 .sobre-portrait { max-width: 460px; justify-self: end; width: 100%; }
-/* Moldura fina em champanhe, com respiro igual nos quatro lados (passe-partout) */
-.portrait-frame {
-  position: relative; padding: 14px;
-  border: 1px solid rgba(195, 166, 120, 0.45);
-  transition: border-color 0.6s ease;
+/* Moldura fina em champanhe, com respiro igual nos quatro lados (passe-partout).
+   As 4 linhas se desenham em sequência quando a seção aparece. */
+.portrait-frame { position: relative; padding: 14px; }
+.portrait-frame .fl {
+  position: absolute; pointer-events: none; background: rgba(195, 166, 120, 0.55);
+  transition: transform 0.5s cubic-bezier(0.45, 0, 0.55, 1), background-color 0.6s ease;
 }
-.sobre-portrait:hover .portrait-frame { border-color: rgba(195, 166, 120, 0.8); }
-[data-theme="light"] .portrait-frame { border-color: rgba(138, 106, 60, 0.4); }
+.portrait-frame .fl-t { top: 0; left: 0; right: 0; height: 1px; transform: scaleX(0); transform-origin: left center; transition-delay: 0.35s, 0s; }
+.portrait-frame .fl-r { top: 0; right: 0; bottom: 0; width: 1px; transform: scaleY(0); transform-origin: center top; transition-delay: 0.85s, 0s; }
+.portrait-frame .fl-b { bottom: 0; left: 0; right: 0; height: 1px; transform: scaleX(0); transform-origin: right center; transition-delay: 1.35s, 0s; }
+.portrait-frame .fl-l { top: 0; left: 0; bottom: 0; width: 1px; transform: scaleY(0); transform-origin: center bottom; transition-delay: 1.85s, 0s; }
+.sobre-portrait.in .portrait-frame .fl { transform: none; }
+.sobre-portrait:hover .portrait-frame .fl { background: rgba(195, 166, 120, 0.9); }
+[data-theme="light"] .portrait-frame .fl { background: rgba(138, 106, 60, 0.45); }
+[data-theme="light"] .sobre-portrait:hover .portrait-frame .fl { background: rgba(138, 106, 60, 0.8); }
+/* A foto entra junto: surge e assenta (leve zoom-out) */
+.sobre-portrait .portrait-img {
+  opacity: 0; transform: scale(1.05);
+  transition: opacity 1.2s ease 0.25s, transform 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.25s;
+}
+.sobre-portrait.in .portrait-img { opacity: 1; transform: none; }
 .sobre-portrait img {
   width: 100%; aspect-ratio: 4/5; object-fit: cover; object-position: 50% 30%;
   filter: saturate(0.95) contrast(1.02); box-shadow: 0 30px 60px rgba(0,0,0,0.35);
@@ -758,6 +771,91 @@ img { display: block; max-width: 100%; }
 /* ------------------------------------------------------------
    Reduced motion
    ------------------------------------------------------------ */
+/* ============================================================
+   Rolagem suave (Lenis)
+   ============================================================ */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+/* ============================================================
+   Abertura — a luz acende
+   ============================================================ */
+.hero-photo { will-change: transform; }
+.hero-content { will-change: transform, opacity; }
+.hero-penumbra {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(ellipse 55% 75% at 72% 50%, rgba(10,6,4,0.5) 0%, rgba(10,6,4,0.9) 100%);
+  animation: luzAcende 2.8s cubic-bezier(0.45, 0, 0.2, 1) 0.2s both;
+}
+[data-theme="light"] .hero-penumbra {
+  background: radial-gradient(ellipse 55% 75% at 72% 50%, rgba(46,32,20,0.45) 0%, rgba(46,32,20,0.82) 100%);
+}
+@keyframes luzAcende { from { opacity: 1; } to { opacity: 0; visibility: hidden; } }
+
+/* ============================================================
+   Borboleta — voa pelo topo e pousa ao lado do slogan
+   ============================================================ */
+.hero-slogan { display: inline-flex; align-items: center; gap: 14px; }
+.pouso { position: relative; display: inline-block; width: 30px; height: 22px; flex-shrink: 0; color: #ecd3a8; }
+[data-theme="light"] .pouso { color: #7a5536; }
+.pouso .voo { position: absolute; inset: 0; display: block; transform-origin: 50% 50%; }
+.pouso .voo.aguardando { opacity: 0; }
+.pouso .voo.voando { filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.28)); }
+.pouso .asas { display: block; width: 100%; height: 100%; transform-origin: 50% 50%; }
+.pouso .asas svg { width: 100%; height: 100%; display: block; }
+/* Batida de asas: a silhueta fecha e abre no eixo do corpo */
+.pouso .voo.voando .asas { animation: bateAsas 0.17s ease-in-out infinite alternate; }
+@keyframes bateAsas { from { transform: scaleX(1); } to { transform: scaleX(0.26); } }
+/* Pousada: de vez em quando ajeita as asas */
+.pouso .voo.pousada .asas { animation: ajeitaAsas 7s ease-in-out 1.2s infinite; }
+@keyframes ajeitaAsas {
+  0%, 84%, 100% { transform: scaleX(1); }
+  87% { transform: scaleX(0.42); }
+  90% { transform: scaleX(1); }
+  93% { transform: scaleX(0.6); }
+  96% { transform: scaleX(1); }
+}
+
+/* ============================================================
+   Projetos — a foto abre como uma cortina ao entrar na tela
+   ============================================================ */
+.carousel.reveal-cortina {
+  clip-path: inset(10% 7% 10% 7%);
+  transition: clip-path 1.7s cubic-bezier(0.77, 0, 0.18, 1);
+}
+.carousel.reveal-cortina.in { clip-path: inset(0 0 0 0); }
+.carousel.reveal-cortina .carousel-slide.active .slide-img {
+  transform: scale(1.12); transition: transform 2.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.carousel.reveal-cortina.in .carousel-slide.active .slide-img { transform: scale(1); }
+.carousel.reveal-cortina .carousel-title {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 1s ease 1.1s, transform 1.2s cubic-bezier(0.16, 1, 0.3, 1) 1.1s;
+}
+.carousel.reveal-cortina.in .carousel-title { opacity: 1; transform: none; }
+.carousel.reveal-cortina:not(.in) .carousel-arrow,
+.carousel.reveal-cortina:not(.in) .carousel-dots { opacity: 0; }
+@media (max-width: 760px) {
+  .carousel.reveal-cortina { clip-path: inset(6% 4% 6% 4%); }
+}
+
+/* Botões magnéticos: o deslocamento vem do JS; aqui só garantimos a camada */
+.hero-cta, .saude-cta, .ver-projeto, .whatsapp-cta { will-change: transform; }
+
+/* Quem prefere menos movimento: tudo já no estado final, sem animar */
+@media (prefers-reduced-motion: reduce) {
+  .hero-penumbra { display: none; }
+  .pouso .voo { opacity: 1 !important; filter: none !important; }
+  .pouso .asas { animation: none !important; }
+  .portrait-frame .fl { transform: none !important; }
+  .sobre-portrait .portrait-img { opacity: 1 !important; transform: none !important; }
+  .carousel.reveal-cortina { clip-path: none !important; }
+  .carousel.reveal-cortina .carousel-title { opacity: 1 !important; transform: none !important; }
+  .carousel.reveal-cortina .carousel-slide.active .slide-img { transform: none !important; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
   .reveal, .reveal-slide { opacity: 1 !important; transform: none !important; }
@@ -1021,7 +1119,9 @@ img { display: block; max-width: 100%; }
 <!-- React auto-hospedado (mesma origem, sem depender do unpkg). -->
 <script src="vendor/react.production.min.js"></script>
 <script src="vendor/react-dom.production.min.js"></script>
+<!-- Rolagem suave (Lenis 1.0.42, MIT) — auto-hospedado -->
+<script src="vendor/lenis.min.js"></script>
 <!-- App React pré-compilado. FONTE editável: app.jsx → recompilar com: npm run build -->
-<script src="app.js?v=8"></script>
+<script src="app.js?v=9"></script>
 </body>
 </html>

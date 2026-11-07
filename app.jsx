@@ -116,35 +116,136 @@ const ARTIGOS = [
 ];
 
 /* ============================================================
+   Movimento — preferências do aparelho
+   ============================================================ */
+const mq = (q) => !!(window.matchMedia && window.matchMedia(q).matches);
+const reduzMovimento = () => mq("(prefers-reduced-motion: reduce)");
+const temMouse = () => mq("(hover: hover) and (pointer: fine)");
+
+/* ============================================================
    Reveal on scroll — hook global (IntersectionObserver)
    ============================================================ */
 function useRevealObserver() {
   useEffect(() => {
     const els = Array.from(document.querySelectorAll(".reveal, .reveal-slide"));
+    // A "cortina" do carrossel é grande: só abre quando boa parte dele está na tela.
+    const cortinas = Array.from(document.querySelectorAll(".reveal-cortina"));
     const reveal = (el) => el.classList.add("in");
     if (!("IntersectionObserver" in window)) {
-      els.forEach(reveal);
+      els.concat(cortinas).forEach(reveal);
       return;
     }
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            reveal(e.target);
-            io.unobserve(e.target);
-          }
-        });
-      },
-      { threshold: 0.1, rootMargin: "0px 0px -6% 0px" }
-    );
-    els.forEach((el) => io.observe(el));
-    // Rede de segurança: nada fica invisível se o observer atrasar/falhar.
-    const t = setTimeout(() => els.forEach(reveal), 2200);
+    const mk = (opts) => new IntersectionObserver((entries, obs) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) { reveal(e.target); obs.unobserve(e.target); }
+      });
+    }, opts);
+    const io = mk({ threshold: 0.1, rootMargin: "0px 0px -6% 0px" });
+    const ioC = mk({ threshold: 0.3 });
+    // As linhas do título (.reveal-slide) começam escondidas dentro de uma máscara
+    // com overflow: hidden — o observer nunca as "vê". Observa a máscara e revela a linha.
+    const ioM = new IntersectionObserver((entries, obs) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.querySelectorAll(".reveal-slide").forEach(reveal);
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    els.forEach((el) => {
+      const mask = el.classList.contains("reveal-slide") && el.closest(".line-mask");
+      if (mask) ioM.observe(mask); else io.observe(el);
+    });
+    cortinas.forEach((el) => ioC.observe(el));
+    // Rede de segurança: o que já está na tela (ou acima dela) nunca fica invisível
+    // se o observer atrasar. O que está mais abaixo continua animando ao rolar.
+    const t = setTimeout(() => {
+      els.concat(cortinas).forEach((el) => {
+        if (el.getBoundingClientRect().top < window.innerHeight) reveal(el);
+      });
+    }, 2200);
     return () => {
       io.disconnect();
+      ioC.disconnect();
+      ioM.disconnect();
       clearTimeout(t);
     };
   }, []);
+}
+
+/* ============================================================
+   Rolagem suave (Lenis) — só com mouse/trackpad; toque fica nativo
+   ============================================================ */
+function useRolagemSuave() {
+  useEffect(() => {
+    if (!window.Lenis || reduzMovimento() || !temMouse()) return;
+    const lenis = new window.Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      wheelMultiplier: 0.9,
+    });
+    window.__lenis = lenis;
+    let raf;
+    const loop = (time) => { lenis.raf(time); raf = requestAnimationFrame(loop); };
+    raf = requestAnimationFrame(loop);
+
+    // Links do menu (#sobre, #projetos...) deslizam com o mesmo movimento
+    const onClick = (e) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey) return;
+      const a = e.target.closest && e.target.closest('a[href^="#"]');
+      if (!a) return;
+      const id = a.getAttribute("href").slice(1);
+      const alvo = id === "top" || id === "" ? 0 : document.getElementById(id);
+      if (alvo == null) return;
+      e.preventDefault();
+      lenis.scrollTo(alvo, { offset: alvo === 0 ? 0 : -72 });
+      if (history.replaceState) history.replaceState(null, "", "#" + (id || "top"));
+    };
+    document.addEventListener("click", onClick);
+    return () => {
+      cancelAnimationFrame(raf);
+      document.removeEventListener("click", onClick);
+      lenis.destroy();
+      delete window.__lenis;
+    };
+  }, []);
+}
+
+/* ============================================================
+   Botão "magnético" — puxa de leve em direção ao mouse (só desktop)
+   ============================================================ */
+function useMagnetico(forca = 0.3, maxX = 10, maxY = 6) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || reduzMovimento() || !temMouse()) return;
+    let raf = null;
+    const lim = (v, m) => Math.max(-m, Math.min(m, v));
+    const onMove = (e) => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        const r = el.getBoundingClientRect();
+        const dx = lim((e.clientX - (r.left + r.width / 2)) * forca, maxX);
+        const dy = lim((e.clientY - (r.top + r.height / 2)) * forca, maxY);
+        el.style.transition = "transform 0.2s ease-out";
+        el.style.transform = `translate3d(${dx.toFixed(1)}px, ${dy.toFixed(1)}px, 0)`;
+      });
+    };
+    const onLeave = () => {
+      if (raf) { cancelAnimationFrame(raf); raf = null; }
+      el.style.transition = "transform 0.7s cubic-bezier(0.16, 1, 0.3, 1)";
+      el.style.transform = "";
+    };
+    el.addEventListener("mousemove", onMove);
+    el.addEventListener("mouseleave", onLeave);
+    return () => {
+      el.removeEventListener("mousemove", onMove);
+      el.removeEventListener("mouseleave", onLeave);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+  return ref;
 }
 
 /* ============================================================
@@ -193,6 +294,82 @@ const Borboleta = ({ className }) => (
 const MarcaDanaus = ({ className = "" }) => (
   <span className={`marca-box ${className}`} aria-hidden="true"><Borboleta /></span>
 );
+
+/* Borboleta da abertura: entra pela esquerda, atravessa o topo
+   batendo as asas e pousa ao lado do slogan. A posição final é o
+   próprio lugar dela no layout — por isso funciona em qualquer tela. */
+function BorboletaVoo() {
+  const pouso = useRef(null);
+  const voo = useRef(null);
+  const [estado, setEstado] = useState("aguardando"); // aguardando → voando → pousada
+
+  useEffect(() => {
+    const el = voo.current;
+    const alvo = pouso.current;
+    if (!el || !alvo) return;
+    // Sem animação: quem pediu menos movimento, navegador antigo, ou se a página
+    // já abriu rolada para baixo (o topo nem está na tela).
+    if (reduzMovimento() || !el.animate || window.scrollY > window.innerHeight * 0.5) {
+      setEstado("pousada");
+      return;
+    }
+    let anim;
+    const t = setTimeout(() => {
+      const hero = alvo.closest(".hero");
+      if (!hero) { setEstado("pousada"); return; }
+      const H = hero.getBoundingClientRect();
+      const P = alvo.getBoundingClientRect();
+      const W = H.width, Hh = H.height;
+      const estreita = W < 760;
+      let x0, y0, c1, c2;
+      if (!estreita) {
+        // Computador: entra pela esquerda, sobe em arco pela parede iluminada
+        // (à direita do título) e desce até o pouso vindo de cima.
+        x0 = H.left - 70 - P.left;
+        y0 = H.top + Hh * 0.5 - P.top;
+        c1 = { x: x0 + W * 0.42, y: y0 - Hh * 0.42 };
+        c2 = { x: -Math.min(160, W * 0.14), y: -Hh * 0.30 };
+      } else {
+        // Celular: o texto ocupa a largura toda — o voo passa pela parte de baixo,
+        // livre, e sobe até o pouso sem cruzar o título.
+        x0 = H.left - 50 - P.left;
+        y0 = Math.min(H.bottom - 40, P.top + Hh * 0.3) - P.top;
+        c1 = { x: x0 + W * 0.75, y: y0 + 30 };
+        c2 = { x: W * 0.5, y: Math.max(60, y0 * 0.35) };
+      }
+      const bez = (u, a, b, c, d) => {
+        const v = 1 - u;
+        return v * v * v * a + 3 * v * v * u * b + 3 * v * u * u * c + u * u * u * d;
+      };
+      const N = 48, frames = [];
+      let px = x0, py = y0;
+      for (let i = 0; i <= N; i++) {
+        const t1 = i / N;
+        const u = 1 - Math.pow(1 - t1, 2.1);            // desacelera para pousar
+        const bob = Math.sin(t1 * Math.PI * 7) * 12 * (1 - t1); // sobe e desce, como borboleta
+        const x = bez(u, x0, c1.x, c2.x, 0);
+        const y = bez(u, y0, c1.y, c2.y, 0) + bob;
+        const ang = i === 0 ? 0 : Math.atan2(y - py, x - px) * 180 / Math.PI;
+        const tilt = i === N ? 0 : Math.max(-22, Math.min(22, ang * 0.3)) * (1 - t1 * 0.6);
+        const sc = 1.35 - 0.35 * u;                      // vem "de perto" e assenta no tamanho final
+        frames.push({ transform: `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) rotate(${tilt.toFixed(1)}deg) scale(${sc.toFixed(3)})` });
+        px = x; py = y;
+      }
+      setEstado("voando");
+      anim = el.animate(frames, { duration: 4600, easing: "linear", fill: "both" });
+      anim.onfinish = () => setEstado("pousada");
+    }, 1250);
+    return () => { clearTimeout(t); if (anim) anim.cancel(); };
+  }, []);
+
+  return (
+    <span className="pouso" ref={pouso} aria-hidden="true">
+      <span className={`voo ${estado}`} ref={voo}>
+        <span className="asas"><Borboleta /></span>
+      </span>
+    </span>
+  );
+}
 
 /* ============================================================
    Contador de visitas (GoatCounter) + cliques nos contatos
@@ -329,9 +506,37 @@ function Nav({ theme, toggleTheme }) {
    Hero
    ============================================================ */
 function Hero() {
+  const foto = useRef(null);
+  const conteudo = useRef(null);
+  const cta = useMagnetico(0.3, 8, 5);
+
+  // Profundidade: ao rolar, a parede anda mais devagar e o texto sobe e esmaece.
+  // Só com mouse (no celular a rolagem fica 100% nativa e leve).
+  useEffect(() => {
+    if (reduzMovimento() || !temMouse()) return;
+    let raf = null;
+    const aplicar = () => {
+      raf = null;
+      const y = window.scrollY;
+      const h = window.innerHeight;
+      if (y > h * 1.2) return; // topo fora da tela: não gasta nada
+      if (foto.current) foto.current.style.transform = `translate3d(0, ${(y * 0.3).toFixed(1)}px, 0)`;
+      if (conteudo.current) {
+        const p = Math.min(1, y / (h * 0.75));
+        conteudo.current.style.transform = `translate3d(0, ${(y * -0.08).toFixed(1)}px, 0)`;
+        conteudo.current.style.opacity = (1 - p * 0.85).toFixed(3);
+      }
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(aplicar); };
+    aplicar();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => { window.removeEventListener("scroll", onScroll); if (raf) cancelAnimationFrame(raf); };
+  }, []);
+
   return (
     <header className="hero" id="top">
       <img
+        ref={foto}
         className="hero-photo"
         src="fotos/hero-luz-2400.jpg"
         srcSet="fotos/hero-luz-1280.jpg 1280w, fotos/hero-luz-2400.jpg 2400w"
@@ -342,9 +547,11 @@ function Hero() {
         fetchpriority="high"
       />
       <div className="hero-overlay" />
+      {/* Penumbra que se dissipa na abertura: "a luz acende" */}
+      <div className="hero-penumbra" aria-hidden="true" />
       <div className="hero-bg-noise" />
 
-      <div className="hero-content">
+      <div className="hero-content" ref={conteudo}>
         <div className="hero-credentials">
           <span className="cred-hide">Maria Eduarda Martins <span className="cred-sep">/</span> </span>
           Arquiteta e Urbanista
@@ -362,12 +569,12 @@ function Hero() {
             <p className="hero-tagline">
               Design de interiores e ambientes da saúde pensados para a vida real — <em>fluxo, uso, luz e conforto</em>. A estética vem depois, como consequência.
             </p>
-            <a className="hero-cta" href={WA_LINK} target="_blank" rel="noopener">
+            <a className="hero-cta" ref={cta} href={WA_LINK} target="_blank" rel="noopener">
               Comece com intenção <span className="arrow" />
             </a>
           </div>
           <div className="hero-aside">
-            <span className="hero-slogan">{SLOGAN}</span>
+            <span className="hero-slogan"><BorboletaVoo />{SLOGAN}</span>
             <span className="eyebrow">Anápolis · Goiânia · Online</span>
             <div className="scroll-cue">
               <span>Role</span>
@@ -447,7 +654,16 @@ function Sobre() {
 
           <div className="sobre-portrait reveal d2">
             {RETRATO.img
-              ? <div className="portrait-frame"><img className="portrait-img" src={RETRATO.img} alt={RETRATO.alt} loading="lazy" decoding="async" /></div>
+              ? (
+                <div className="portrait-frame">
+                  {/* 4 linhas que se desenham em sequência, no sentido horário */}
+                  <span className="fl fl-t" aria-hidden="true" />
+                  <span className="fl fl-r" aria-hidden="true" />
+                  <span className="fl fl-b" aria-hidden="true" />
+                  <span className="fl fl-l" aria-hidden="true" />
+                  <img className="portrait-img" src={RETRATO.img} alt={RETRATO.alt} loading="lazy" decoding="async" />
+                </div>
+              )
               : <Placeholder label="RETRATO — EM BREVE" />}
             <div className="cap">{RETRATO.legenda}</div>
           </div>
@@ -467,6 +683,7 @@ function Sobre() {
    Ambientes da saúde
    ============================================================ */
 function Saude() {
+  const cta = useMagnetico(0.3, 8, 5);
   return (
     <section className="section saude" id="saude">
       <div className="section-inner">
@@ -496,7 +713,7 @@ function Saude() {
           <ul className="saude-tipos" aria-label="Tipos de projeto">
             {SAUDE_TIPOS.map((t) => <li key={t}>{t}</li>)}
           </ul>
-          <a className="saude-cta" href={WA_LINK_SAUDE} target="_blank" rel="noopener">
+          <a className="saude-cta" ref={cta} href={WA_LINK_SAUDE} target="_blank" rel="noopener">
             Conversar sobre um projeto de saúde <span className="arrow" />
           </a>
         </div>
@@ -552,17 +769,30 @@ function Galeria({ projeto, onClose }) {
   useEffect(() => {
     const prev = document.activeElement;
     document.body.style.overflow = "hidden";
+    if (window.__lenis) window.__lenis.stop();
     closeRef.current && closeRef.current.focus();
+    // Fase de captura: roda antes de qualquer outro handler (a galeria é um portal
+    // e o stopPropagation abaixo impediria o evento de chegar ao window).
     const onKey = (e) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") { e.preventDefault(); onClose(); }
       else if (e.key === "ArrowLeft") go(-1);
       else if (e.key === "ArrowRight") go(1);
+      else if (e.key === "Tab") {
+        // Mantém o foco do teclado dentro da galeria aberta
+        const box = document.querySelector(".galeria");
+        const f = box ? Array.from(box.querySelectorAll("button")) : [];
+        if (!f.length) return;
+        const i = f.indexOf(document.activeElement);
+        e.preventDefault();
+        f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus();
+      }
     };
-    window.addEventListener("keydown", onKey);
+    window.addEventListener("keydown", onKey, true);
     return () => {
       document.body.style.overflow = "";
-      window.removeEventListener("keydown", onKey);
-      prev && prev.focus && prev.focus();
+      if (window.__lenis) window.__lenis.start();
+      window.removeEventListener("keydown", onKey, true);
+      prev && prev.focus && prev.focus({ preventScroll: true });
     };
   }, []);
 
@@ -614,6 +844,7 @@ function Carousel() {
   const n = CARROSSEL.length;
   const go = (d) => setI((p) => (p + d + n) % n);
   const touchX = useRef(null);
+  const verRef = useMagnetico(0.3, 10, 6);
 
   // Avanço automático (pausa no hover; respeita "reduzir movimento")
   useEffect(() => {
@@ -640,7 +871,7 @@ function Carousel() {
 
   return (
     <div
-      className="carousel"
+      className="carousel reveal-cortina"
       role="group"
       aria-roledescription="carrossel"
       aria-label="Projetos"
@@ -683,7 +914,7 @@ function Carousel() {
         <h3 className="carousel-name">{cur.nome}</h3>
         <p className="carousel-desc">{cur.desc}</p>
         {cur.img && (
-          <button className="ver-projeto" onClick={() => setAberto(cur)}>
+          <button className="ver-projeto" ref={verRef} onClick={() => setAberto(cur)}>
             Ver projeto
             {cur.fotos && cur.fotos.length > 1 && <span className="ver-n">{cur.fotos.length} fotos</span>}
             <span className="arrow" />
@@ -768,6 +999,7 @@ function Escritos() {
    Contato
    ============================================================ */
 function Contato() {
+  const wa = useMagnetico(0.25, 12, 7);
   return (
     <section className="section contato" id="contato">
       <div className="contato-inner">
@@ -780,7 +1012,7 @@ function Contato() {
         </p>
 
         <div className="contato-actions reveal d2">
-          <a className="whatsapp-cta" href={WA_LINK} target="_blank" rel="noopener">
+          <a className="whatsapp-cta" ref={wa} href={WA_LINK} target="_blank" rel="noopener">
             <span className="wa-badge"><IconWhats /></span>
             Chamar no WhatsApp
             <span className="arrow" />
@@ -867,6 +1099,7 @@ function App() {
   );
 
   useRevealObserver();
+  useRolagemSuave();
   useContador();
 
   useEffect(() => {
@@ -874,7 +1107,7 @@ function App() {
     root.classList.add("theme-transitioning");
     if (theme === "light") root.setAttribute("data-theme", "light");
     else root.removeAttribute("data-theme");
-    localStorage.setItem("danaus-theme", theme);
+    try { localStorage.setItem("danaus-theme", theme); } catch (e) {}
     const t = setTimeout(() => root.classList.remove("theme-transitioning"), 700);
     return () => clearTimeout(t);
   }, [theme]);

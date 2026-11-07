@@ -32,7 +32,7 @@ async function getDataURI(url, mime) {
   });
   // Remove os <link rel="preload"> de fonte e injeta o CSS das fontes inline no lugar do <link fonts.css>
   html = html.replace(/<link rel="preload"[^>]*as="font"[^>]*\/>\s*/g, "");
-  html = html.replace(/<link href="fonts\.css" rel="stylesheet" \/>/, `<style>\n${fontCss}\n</style>`);
+  html = html.replace(/<link href="fonts\.css" rel="stylesheet" \/>/, () => `<style>\n${fontCss}\n</style>`);
 
   console.log("Embutindo fotos...");
   const imgUrls = [...new Set([...app.matchAll(/https:\/\/substackcdn\.com\/[^"']+/g)].map((m) => m[0]))];
@@ -53,16 +53,18 @@ async function getDataURI(url, mime) {
 
   // Preload da foto do topo e favicons apontam para arquivos: embute/remove no arquivo único
   html = html.replace(/<link rel="preload" as="image"[^>]*\/>\s*/g, "");
-  html = html.replace('href="favicon.svg"', `href="${fileToDataURI(path.join(dir, "favicon.svg"), "image/svg+xml")}"`);
+  html = html.replace('href="favicon.svg"', () => `href="${fileToDataURI(path.join(dir, "favicon.svg"), "image/svg+xml")}"`);
   html = html.replace(/<link rel="apple-touch-icon"[^>]*\/>\s*/g, "");
 
   console.log("Embutindo React local + app...");
   const react = readText(path.join(dir, "vendor", "react.production.min.js"));
   const reactDom = readText(path.join(dir, "vendor", "react-dom.production.min.js"));
-  html = html.replace(/<script src="vendor\/react\.production\.min\.js"><\/script>/, `<script>${react}</script>`);
-  html = html.replace(/<script src="vendor\/react-dom\.production\.min\.js"><\/script>/, `<script>${reactDom}</script>`);
+  html = html.replace(/<script src="vendor\/react\.production\.min\.js"><\/script>/, () => `<script>${react}</script>`);
+  html = html.replace(/<script src="vendor\/react-dom\.production\.min\.js"><\/script>/, () => `<script>${reactDom}</script>`);
+  const lenis = readText(path.join(dir, "vendor", "lenis.min.js"));
+  html = html.replace(/<script src="vendor\/lenis\.min\.js"><\/script>/, () => `<script>${lenis}</script>`);
   html = html.replace(/<!-- App React[^>]*-->\s*/g, "");
-  html = html.replace(/<script src="app\.js[^"]*"><\/script>/, `<script>${app}</script>`);
+  html = html.replace(/<script src="app\.js[^"]*"><\/script>/, () => `<script>${app}</script>`);
 
   fs.writeFileSync(path.join(dir, "standalone.html"), html, "utf8");
   const kb = (Buffer.byteLength(html) / 1024).toFixed(0);

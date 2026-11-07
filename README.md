@@ -24,7 +24,10 @@ Uma página única (one-page), em estilo editorial e sofisticado, pensada para t
 - **Carrossel** de projetos em tela cheia, com avanço automático
 - **Responsivo** (celular, tablet e desktop)
 - Botão direto de **WhatsApp** e link do **Instagram**
-- Animações de entrada e brilho, respeitando "reduzir movimento" por acessibilidade
+- **Abertura animada**: a luz acende na parede e a borboleta da marca voa e pousa ao lado do slogan
+- **Rolagem suave** (Lenis) e profundidade no topo — só com mouse/trackpad; no celular a rolagem fica nativa
+- Moldura do retrato que se desenha, foto do projeto que abre como cortina e botões "magnéticos"
+- Tudo respeita "reduzir movimento" (acessibilidade): quem ativa vê o site parado, já no estado final
 
 ---
 
