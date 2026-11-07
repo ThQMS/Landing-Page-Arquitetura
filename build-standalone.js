@@ -42,6 +42,20 @@ async function getDataURI(url, mime) {
     app = app.split(u).join(dataUri);
   }
 
+  // Fotos locais (pasta fotos/)
+  const localImgs = [...new Set([...app.matchAll(/fotos\/[\w.-]+\.(?:jpe?g|png|webp)/g)].map((m) => m[0]))];
+  for (const rel of localImgs) {
+    const ext = rel.split(".").pop().toLowerCase();
+    const mime = ext === "png" ? "image/png" : ext === "webp" ? "image/webp" : "image/jpeg";
+    const uri = fileToDataURI(path.join(dir, rel), mime);
+    app = app.split(rel).join(uri);
+  }
+
+  // Preload da foto do topo e favicons apontam para arquivos: embute/remove no arquivo único
+  html = html.replace(/<link rel="preload" as="image"[^>]*\/>\s*/g, "");
+  html = html.replace('href="favicon.svg"', `href="${fileToDataURI(path.join(dir, "favicon.svg"), "image/svg+xml")}"`);
+  html = html.replace(/<link rel="apple-touch-icon"[^>]*\/>\s*/g, "");
+
   console.log("Embutindo React local + app...");
   const react = readText(path.join(dir, "vendor", "react.production.min.js"));
   const reactDom = readText(path.join(dir, "vendor", "react-dom.production.min.js"));

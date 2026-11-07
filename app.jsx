@@ -13,12 +13,26 @@ const INSTAGRAM_HANDLE = "@eduarda.martinsarq";
 const SUBSTACK = "https://danausarquitetura.substack.com";
 
 const EMAIL_PROFISSIONAL = "dumartins0304@gmail.com";
-const FORM_LINK = "https://pay.kiwify.com.br/45GfLZS";  // link que a cliente usa para receber as solicitações
+// Link do formulário de solicitação de projeto. Vazio = o botão "Solicitar projeto" fica escondido.
+// (O link antigo da Kiwify era de outra coisa — aguardando o link correto.)
+const FORM_LINK = "";
+const CAU = "A321508-3";
+const ATENDIMENTO = "Seg. a sex. · 9h às 16h";
+const SLOGAN = "Se você pode sonhar, pode realizar.";
+
+/* Contador de visitas (GoatCounter — gratuito, sem cookies).
+   Crie a conta em https://www.goatcounter.com/signup e coloque aqui o código
+   escolhido (ex.: "danaus" para danaus.goatcounter.com). Vazio = desligado. */
+const GOATCOUNTER = "";
+
+const WA_LINK_SAUDE = `https://api.whatsapp.com/send/?phone=${WHATSAPP}&text=${encodeURIComponent(
+  "Oi, tudo bem? Gostaria de conversar sobre um projeto para a área da saúde (clínica/consultório)."
+)}`;
 
 // Palavras que giram na faixa (marquee)
 const MARQUEE = [
   "Design de Interiores", "Ambientes da Saúde", "Clínicas", "Consultórios",
-  "Reforma", "Detalhamento", "Luz Natural", "Residencial",
+  "Arquitetura Hospitalar", "Detalhamento", "Luz Natural", "Residencial",
 ];
 
 // Etapas do processo de projeto
@@ -29,6 +43,15 @@ const PROCESSO = [
   { n: "04", nome: "Obra", desc: "Acompanhamento e curadoria de acabamentos, garantindo que o desenho vire realidade com o mesmo cuidado." },
 ];
 
+// Ambientes da saúde — o que um projeto para a área considera
+const SAUDE = [
+  { t: "Normas desde o início", d: "Projeto desenvolvido conforme a RDC 50 da Anvisa e a norma de acessibilidade NBR 9050, pensando desde o primeiro traço na aprovação junto à vigilância sanitária." },
+  { t: "Fluxos que funcionam", d: "Circulação de pacientes, equipe, materiais e resíduos organizada para evitar cruzamentos — mais segurança e uma rotina mais fluida para quem trabalha ali." },
+  { t: "Materiais certos", d: "Revestimentos laváveis e resistentes à limpeza frequente, escolhidos sem abrir mão do aconchego e da identidade do espaço." },
+  { t: "Acolhimento", d: "Luz, cor, acústica e mobiliário que diminuem a tensão de quem espera e transmitem confiança desde a recepção." },
+];
+const SAUDE_TIPOS = ["Consultórios", "Clínicas", "Salas de exame e procedimento", "Recepções e salas de espera", "Ambientes hospitalares"];
+
 /* ------------------------------------------------------------------
    PORTFÓLIO — carrossel de projetos (tela cheia)
 
@@ -37,7 +60,10 @@ const PROCESSO = [
    2) Copie o modelo abaixo, cole na lista e preencha;
    3) Renumere o campo `num` ("01", "02", "03"...) na ordem em que aparecem.
 
-     { num: "04", nome: "Nome do projeto", desc: "Uma ou duas frases.", img: "fotos/arquivo.jpg" },
+     { num: "02", nome: "Nome do projeto", ano: "2025", desc: "Uma ou duas frases.", img: "fotos/arquivo.jpg" },
+
+   GALERIA: `fotos` é a lista de imagens que abre ao clicar em "Ver projeto".
+   Se não houver `fotos`, a galeria mostra só a capa (`img`).
 
    REGRAS ÚTEIS:
    • Slide SEM `img` vira automaticamente o cartão "em breve" — serve de reserva.
@@ -48,26 +74,11 @@ const PROCESSO = [
 const CARROSSEL = [
   {
     num: "01",
-    nome: "Residência A",
-    desc: "Casa térrea com pátio central. A planta organiza-se em torno da luz e da ventilação cruzada.",
-    img: "https://substackcdn.com/image/fetch/$s_!3i5q!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fa58444ef-f6bd-4103-aa16-37f2ebd1f80b_1280x720.jpeg",
-  },
-  {
-    num: "02",
-    nome: "Residência B",
-    desc: "Reforma de apartamento. Reorganização dos ambientes sociais para ganhar amplitude sem ampliar a metragem.",
-    img: "https://substackcdn.com/image/fetch/$s_!ovZ2!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fdae2b184-4d27-4caf-943d-8364074e3bff_960x1280.jpeg",
-  },
-  {
-    // Reservado para o projeto da Josi — é só acrescentar `img` quando as fotos chegarem.
-    num: "03",
-    nome: "Projeto Josi",
-    desc: "Em breve: as fotos deste projeto entram aqui.",
-  },
-  {
-    num: "04",
-    nome: "Projeto em breve",
-    desc: "Novos trabalhos entram aqui à medida que forem entregues e fotografados.",
+    nome: "Cozinha Viva",
+    ano: "2026",
+    desc: "Um projeto que une beleza, funcionalidade e convivência. Pensado para integrar momentos compartilhados, com ambientes bem definidos e soluções que favorecem a organização e a praticidade no dia a dia, sem abrir mão do acolhimento.",
+    img: "fotos/cozinha-viva.jpg",              // capa do carrossel
+    fotos: ["fotos/cozinha-viva.jpg"],         // galeria (abre em "Ver projeto") — acrescente mais fotos aqui
   },
 ];
 
@@ -77,9 +88,9 @@ const CARROSSEL = [
    Enquanto estiver vazio, aparece o cartão "retrato — em breve".
    ------------------------------------------------------------------ */
 const RETRATO = {
-  img: "",                                              // ex.: "fotos/eduarda.jpg"
+  img: "fotos/maria-eduarda.jpg",
   alt: "Maria Eduarda Martins, arquiteta e urbanista",
-  legenda: "Maria Eduarda Martins · Arquiteta e Urbanista",
+  legenda: "Maria Eduarda Martins · Arquiteta e Urbanista · CAU A321508-3",
 };
 
 // Artigos reais, puxados do Substack
@@ -87,7 +98,7 @@ const ARTIGOS = [
   {
     titulo: "Arquitetura que permanece",
     resumo: "Sobre o que torna um projeto atemporal, além da estética do momento.",
-    data: "2026",
+    data: "26 Fev 2026",
     link: "https://danausarquitetura.substack.com/p/arquitetura-que-permanece",
   },
   {
@@ -171,6 +182,45 @@ const IconMoon = () => (
   </svg>
 );
 
+/* Borboleta da logo Danaus (vetorizada a partir da logo original) */
+const BORBOLETA_D = "M 366.3 277.1 C 389.8 275.8 427.8 287.0 450.5 294.5 C 480.1 304.3 505.8 320.3 532.9 335.0 C 629.6 388.1 718.4 454.5 796.5 532.4 C 805.7 541.7 811.4 549.2 819.7 558.9 C 826.5 567.1 836.2 574.5 842.8 582.6 C 850.9 594.9 865.7 606.5 874.0 617.7 C 892.3 642.0 917.1 666.8 933.7 691.7 C 950.3 716.6 969.6 748.7 981.9 775.4 C 985.8 776.2 986.2 776.0 990.2 775.3 C 996.0 769.7 988.4 754.2 1009.9 740.9 C 1037.9 723.4 1050.2 735.2 1065.3 760.6 C 1068.5 766.0 1055.7 789.1 1065.2 791.3 C 1079.3 785.8 1083.1 758.9 1089.5 745.5 C 1093.8 736.5 1097.0 722.5 1102.2 714.4 C 1127.6 674.6 1160.6 640.4 1189.7 603.6 C 1203.1 586.6 1220.2 570.8 1235.6 555.4 C 1321.8 469.6 1421.5 398.4 1530.8 344.8 C 1571.4 324.6 1620.7 302.3 1665.9 297.6 C 1667.2 296.4 1669.2 294.4 1669.9 294.8 C 1677.4 298.5 1681.9 297.9 1690.2 298.6 C 1722.7 301.3 1749 317.3 1756.7 350.5 C 1757.8 355.6 1755.8 362.2 1757.5 368.9 C 1759.3 369.9 1759.5 369.9 1760.8 371.5 C 1761.0 375.8 1760.8 378.2 1759.2 382.3 C 1755.4 392.0 1758.1 405.2 1756.4 416.0 C 1753.8 432.3 1751.3 452.0 1746.5 467.8 C 1740.3 488.6 1732.5 510.9 1723.5 530.6 C 1713.3 554.7 1693.5 582.6 1689.5 608.9 C 1686.5 628.0 1690.8 648.8 1683.5 669.3 C 1680.8 676.9 1680.8 693.4 1677.9 702.5 C 1674.8 712.2 1675 726.9 1672.3 737.2 C 1662.9 775.3 1650.9 828.4 1614.3 849.9 C 1603.4 855.7 1591.2 859.8 1579.3 863.3 C 1571.7 865.5 1561.7 866.0 1556.0 871.6 C 1555.6 873.0 1555.0 875.1 1556.1 876.4 C 1567.2 888.6 1581.8 899.7 1593.1 912.2 C 1597.7 917.3 1604.1 922.6 1607.7 927.7 C 1617.2 941.2 1625.3 956.8 1633.5 971.2 C 1634.9 973.7 1634.2 981.5 1635 983.5 C 1637.0 985.4 1638.3 984.7 1638.2 988.0 C 1638.0 1028.3 1631.2 1071.5 1622.9 1110.8 C 1619.9 1125.3 1612.9 1140.2 1609.0 1154.2 C 1605.1 1168.3 1599.4 1184.7 1590.7 1195.8 C 1582.4 1204.0 1571.2 1214.2 1563.9 1222.8 C 1541.8 1249 1520.0 1276.2 1486.6 1288.0 C 1483.3 1289.2 1473.5 1293.0 1470.8 1294.6 C 1430.3 1318.3 1384.0 1333.5 1336.5 1329.4 C 1333.8 1329.2 1330.7 1329.9 1328.5 1326.8 C 1317.9 1326.9 1300.3 1320.2 1291.6 1316.7 C 1256.2 1302.1 1224.1 1280.5 1197.3 1253.1 C 1191.4 1247.0 1185.6 1238.3 1180.1 1233.0 C 1161.3 1215.8 1149.7 1194.1 1134.8 1174.4 C 1103.4 1132.9 1076.1 1089.0 1047.2 1045.8 C 1045.6 1043.4 1043 1042.0 1040.2 1042.0 C 1036.3 1047.5 1037.9 1075.1 1039.6 1082.3 C 1043.9 1100.2 1041.7 1126.1 1042.0 1144.6 C 1043.1 1145.7 1044.0 1146.5 1045.3 1147.3 C 1046.5 1170.6 1044.2 1193.0 1048.5 1216.3 C 1049.9 1223.9 1044.6 1245.6 1039.2 1251.6 C 1036.1 1255.2 1026.1 1254.1 1021.2 1253.9 C 1004.4 1229.7 1005.2 1218.8 1009.2 1192.4 C 1011.5 1177.9 1010.4 1157.3 1006.9 1143.3 C 1005.1 1136.5 1007.0 1123.1 1005.5 1115.9 C 1004.1 1109.0 1003.4 1100.4 1002.6 1093.3 C 1001.6 1076.1 1002.8 1059.2 1002.7 1042.1 C 1002.6 1039.6 1001.4 1038.8 999.9 1037.5 C 989.3 1036.1 974.0 1065.5 968.0 1073.8 L 924.2 1133.2 C 913.4 1148.0 901.1 1166.6 889.5 1180.5 C 872.2 1202.1 853.5 1221.2 834.2 1240.9 C 813.5 1262.0 796.2 1276.5 770.2 1291.1 C 747.5 1303.7 722.1 1306.6 697.4 1313.7 C 688.1 1316.4 648.7 1315.5 638.4 1314.8 C 603.0 1312.4 569.0 1293.2 539.7 1274.8 C 527.2 1267.0 512.8 1257.9 502.1 1247.8 C 484.9 1231.2 475.1 1207.7 458.5 1191.1 C 456.5 1189.0 447.1 1184.4 444.1 1182.8 C 440.4 1174.7 434.9 1171.2 431.8 1164.3 C 422.6 1145.6 419.9 1122.7 412.8 1103.6 C 404.8 1082.2 401.6 1067.4 397.9 1045.3 C 389.7 1002.2 396.3 959.1 422.0 922.8 C 433.6 906.2 453.9 886.6 467.5 870.8 C 472.0 865.6 478.8 864.9 481.3 857.5 C 481.0 855.9 481.4 856.1 479.7 855.1 C 473.5 851.5 465.5 852.6 458.9 850.4 C 436.3 842.9 401.9 823.5 391.9 801.4 C 388.4 793.6 387.3 782.8 385.5 774.3 C 382.1 758.5 377.8 742.6 375.1 726.7 C 372.1 708.9 370.3 690.4 367.8 672.5 C 367.0 666.4 367.7 650.0 363.9 645.9 C 361.2 642.9 363.5 596.2 362.2 587.3 C 358.8 564.5 345.6 547.3 335.7 527.3 C 332.4 520.5 329.8 513.3 326.6 506.4 C 318.4 488.7 310.0 471.5 303.6 453.0 C 291.2 416.9 282.5 359.9 300.1 324.6 C 315.3 294.4 337.0 287.1 366.3 277.1 z";
+const Borboleta = ({ className }) => (
+  <svg className={className} viewBox="282 275 1480 1059" aria-hidden="true">
+    <path fill="currentColor" d={BORBOLETA_D} />
+  </svg>
+);
+/* Símbolo: o retângulo marrom com a borboleta, como na logo */
+const MarcaDanaus = ({ className = "" }) => (
+  <span className={`marca-box ${className}`} aria-hidden="true"><Borboleta /></span>
+);
+
+/* ============================================================
+   Contador de visitas (GoatCounter) + cliques nos contatos
+   ============================================================ */
+function useContador() {
+  useEffect(() => {
+    if (!GOATCOUNTER) return;
+    const sc = document.createElement("script");
+    sc.async = true;
+    sc.src = "https://gc.zgo.at/count.js";
+    sc.dataset.goatcounter = `https://${GOATCOUNTER}.goatcounter.com/count`;
+    document.body.appendChild(sc);
+    // Conta cliques em WhatsApp, Instagram, e-mail e Substack como "eventos"
+    const onClick = (e) => {
+      const a = e.target.closest && e.target.closest("a[href]");
+      if (!a || !window.goatcounter || !window.goatcounter.count) return;
+      const h = a.getAttribute("href");
+      const nome = h.includes("whatsapp") ? "clique-whatsapp"
+        : h.includes("instagram") ? "clique-instagram"
+        : h.startsWith("mailto:") ? "clique-email"
+        : h.includes("substack") ? "clique-substack" : null;
+      if (nome) window.goatcounter.count({ path: nome, title: a.textContent.trim().slice(0, 60), event: true });
+    };
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
+  }, []);
+}
+
 /* ============================================================
    Ambient glow (fundo fixo)
    ============================================================ */
@@ -194,7 +244,7 @@ function Nav({ theme, toggleTheme }) {
   // Scrollspy: destaca no menu a seção que está na tela
   useEffect(() => {
     if (!("IntersectionObserver" in window)) return;
-    const secs = ["sobre", "processo", "projetos", "escritos", "contato"]
+    const secs = ["sobre", "saude", "processo", "projetos", "escritos", "contato"]
       .map((id) => document.getElementById(id))
       .filter(Boolean);
     const io = new IntersectionObserver(
@@ -234,6 +284,7 @@ function Nav({ theme, toggleTheme }) {
 
   const links = [
     ["#sobre", "Sobre"],
+    ["#saude", "Saúde"],
     ["#processo", "Processo"],
     ["#projetos", "Projetos"],
     ["#escritos", "Escritos"],
@@ -242,9 +293,9 @@ function Nav({ theme, toggleTheme }) {
 
   return (
     <nav className={cls}>
-      <a className="nav-mark" href="#top" aria-label="Maria Eduarda Martins — início">
-        <span className="mark-glyph">M</span>
-        <span className="mark-name">Maria Eduarda<small>Interiores &amp; Ambientes da Saúde</small></span>
+      <a className="nav-mark" href="#top" aria-label="Danaus Arquitetura — início">
+        <MarcaDanaus className="mark-glyph" />
+        <span className="mark-name">Danaus<small>Arquitetura · Maria Eduarda Martins</small></span>
       </a>
 
       <div className="nav-links">
@@ -280,8 +331,17 @@ function Nav({ theme, toggleTheme }) {
 function Hero() {
   return (
     <header className="hero" id="top">
+      <img
+        className="hero-photo"
+        src="fotos/hero-luz-2400.jpg"
+        srcSet="fotos/hero-luz-1280.jpg 1280w, fotos/hero-luz-2400.jpg 2400w"
+        sizes="100vw"
+        alt=""
+        aria-hidden="true"
+        decoding="async"
+        fetchpriority="high"
+      />
       <div className="hero-overlay" />
-      <div className="hero-watermark"><span className="glyph">M</span></div>
       <div className="hero-bg-noise" />
 
       <div className="hero-content">
@@ -307,7 +367,8 @@ function Hero() {
             </a>
           </div>
           <div className="hero-aside">
-            <span className="eyebrow">Anápolis · GO</span>
+            <span className="hero-slogan">{SLOGAN}</span>
+            <span className="eyebrow">Anápolis · Goiânia · Online</span>
             <div className="scroll-cue">
               <span>Role</span>
               <span className="bar" />
@@ -360,7 +421,7 @@ function Sobre() {
             <h2 className="section-title">Maria Eduarda <em>Martins</em></h2>
           </div>
           <p className="section-lead">
-            Arquiteta e urbanista, especialista em design de interiores e ambientes da saúde. Acredito que a beleza é resultado de boas decisões — não o ponto de partida.
+            Arquiteta e urbanista, com especialização em Arquitetura Hospitalar. Acredito que a beleza é resultado de boas decisões — não o ponto de partida.
           </p>
         </div>
 
@@ -373,27 +434,71 @@ function Sobre() {
               Meu trabalho se concentra em <strong>design de interiores</strong> e em <strong>ambientes da saúde</strong> — hospitais, clínicas e consultórios. São espaços que exigem duas coisas ao mesmo tempo: acolher quem chega e funcionar para quem trabalha ali o dia inteiro. Fluxos, higiene, iluminação e conforto não são detalhes; são o projeto.
             </p>
             <p>
-              São cerca de quatro anos de atuação e mais de trinta projetos entregues — autorais e em parceria com outros escritórios —, atendendo Anápolis, Goiânia e região. <em>Projetos residenciais também são desenvolvidos sob demanda</em>: não são o foco principal, mas são bem-vindos quando fazem sentido.
+              O atendimento é presencial em Anápolis e Goiânia e on-line para todo o Brasil e o exterior. <em>Projetos residenciais também são desenvolvidos sob demanda</em>: não são o foco principal, mas são bem-vindos quando fazem sentido.
             </p>
-            <p>
-              <em style={{ color: "var(--cream-2)", fontStyle: "italic" }}>
-                [Este é um texto de exemplo — o bio final entra aqui: formação e trajetória.]
-              </em>
-            </p>
+
+            <dl className="sobre-cred">
+              <div><dt>Formação</dt><dd>Arquitetura e Urbanismo <span>· 2025</span></dd></div>
+              <div><dt>Especialização</dt><dd>Arquitetura Hospitalar</dd></div>
+              <div><dt>MBA</dt><dd>Gestão de Projetos</dd></div>
+              <div><dt>Registro</dt><dd>CAU {CAU}</dd></div>
+            </dl>
           </div>
 
           <div className="sobre-portrait reveal d2">
             {RETRATO.img
-              ? <img className="portrait-img" src={RETRATO.img} alt={RETRATO.alt} loading="lazy" decoding="async" />
+              ? <div className="portrait-frame"><img className="portrait-img" src={RETRATO.img} alt={RETRATO.alt} loading="lazy" decoding="async" /></div>
               : <Placeholder label="RETRATO — EM BREVE" />}
             <div className="cap">{RETRATO.legenda}</div>
           </div>
 
           <div className="sobre-stats reveal d3">
-            <div className="stat"><div className="num">+4<em>a</em></div><div className="label">Anos de projeto</div></div>
-            <div className="stat"><div className="num">30<em>+</em></div><div className="label">Projetos realizados</div></div>
-            <div className="stat"><div className="num">100%</div><div className="label">Projeto sob medida</div></div>
+            <div className="stat"><div className="num">Presencial</div><div className="label">Anápolis &amp; Goiânia</div></div>
+            <div className="stat"><div className="num"><em>On-line</em></div><div className="label">Todo o Brasil &amp; exterior</div></div>
+            <div className="stat"><div className="num">Sob medida</div><div className="label">Cada projeto parte do zero</div></div>
           </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ============================================================
+   Ambientes da saúde
+   ============================================================ */
+function Saude() {
+  return (
+    <section className="section saude" id="saude">
+      <div className="section-inner">
+        <div className="section-head reveal">
+          <div className="head-left">
+            <div className="section-eyebrow">
+              <span className="roman">II</span><span className="rule" /><span className="label">Ambientes da saúde</span>
+            </div>
+            <h2 className="section-title">Cuidar começa<br/>pelo <em>espaço</em>.</h2>
+          </div>
+          <p className="section-lead">
+            Hospitais, clínicas e consultórios precisam acolher quem chega e funcionar para quem trabalha ali o dia inteiro. Com especialização em Arquitetura Hospitalar, cada decisão de projeto parte dessas duas necessidades.
+          </p>
+        </div>
+
+        <div className="saude-grid">
+          {SAUDE.map((x, i) => (
+            <div className={`saude-item reveal d${i + 1}`} key={x.t}>
+              <span className="saude-num">{String(i + 1).padStart(2, "0")}</span>
+              <h3>{x.t}</h3>
+              <p>{x.d}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="saude-foot reveal">
+          <ul className="saude-tipos" aria-label="Tipos de projeto">
+            {SAUDE_TIPOS.map((t) => <li key={t}>{t}</li>)}
+          </ul>
+          <a className="saude-cta" href={WA_LINK_SAUDE} target="_blank" rel="noopener">
+            Conversar sobre um projeto de saúde <span className="arrow" />
+          </a>
         </div>
       </div>
     </section>
@@ -410,7 +515,7 @@ function Processo() {
         <div className="section-head reveal">
           <div className="head-left">
             <div className="section-eyebrow">
-              <span className="roman">II</span><span className="rule" /><span className="label">Processo</span>
+              <span className="roman">III</span><span className="rule" /><span className="label">Processo</span>
             </div>
             <h2 className="section-title">Do <em>problema</em><br/>à planta.</h2>
           </div>
@@ -436,20 +541,87 @@ function Processo() {
 /* ============================================================
    Projetos (galeria)
    ============================================================ */
+function Galeria({ projeto, onClose }) {
+  const fotos = projeto.fotos && projeto.fotos.length ? projeto.fotos : [projeto.img];
+  const [k, setK] = useState(0);
+  const n = fotos.length;
+  const go = (d) => setK((p) => (p + d + n) % n);
+  const closeRef = useRef(null);
+  const touchX = useRef(null);
+
+  useEffect(() => {
+    const prev = document.activeElement;
+    document.body.style.overflow = "hidden";
+    closeRef.current && closeRef.current.focus();
+    const onKey = (e) => {
+      if (e.key === "Escape") onClose();
+      else if (e.key === "ArrowLeft") go(-1);
+      else if (e.key === "ArrowRight") go(1);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKey);
+      prev && prev.focus && prev.focus();
+    };
+  }, []);
+
+  // Portal: renderiza direto no <body>, acima de tudo (fora da seção de projetos)
+  return ReactDOM.createPortal(
+    <div
+      className="galeria"
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Galeria — ${projeto.nome}`}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+      onKeyDown={(e) => e.stopPropagation()}
+      onTouchStart={(e) => { touchX.current = e.touches[0].clientX; }}
+      onTouchEnd={(e) => {
+        if (touchX.current == null) return;
+        const dx = e.changedTouches[0].clientX - touchX.current;
+        if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
+        touchX.current = null;
+      }}
+    >
+      <div className="galeria-top">
+        <div className="galeria-info">
+          <span className="galeria-nome">{projeto.nome}</span>
+          {projeto.ano && <span className="galeria-ano">{projeto.ano}</span>}
+        </div>
+        <button ref={closeRef} className="galeria-close" onClick={onClose} aria-label="Fechar galeria">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" /></svg>
+        </button>
+      </div>
+
+      <img className="galeria-img" key={fotos[k]} src={fotos[k]} alt={`${projeto.nome} — foto ${k + 1} de ${n}`} decoding="async" />
+
+      {n > 1 && (
+        <>
+          <button className="carousel-arrow prev" onClick={() => go(-1)} aria-label="Foto anterior"><IconChevron dir="left" /></button>
+          <button className="carousel-arrow next" onClick={() => go(1)} aria-label="Próxima foto"><IconChevron dir="right" /></button>
+          <div className="galeria-count">{String(k + 1).padStart(2, "0")} / {String(n).padStart(2, "0")}</div>
+        </>
+      )}
+    </div>,
+    document.body
+  );
+}
+
 function Carousel() {
   const [i, setI] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [aberto, setAberto] = useState(null); // projeto aberto na galeria
   const n = CARROSSEL.length;
   const go = (d) => setI((p) => (p + d + n) % n);
   const touchX = useRef(null);
 
   // Avanço automático (pausa no hover; respeita "reduzir movimento")
   useEffect(() => {
-    if (paused || n < 2) return;
+    if (paused || aberto || n < 2) return;
     if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const t = setInterval(() => setI((p) => (p + 1) % n), 6500);
     return () => clearInterval(t);
-  }, [paused, n]);
+  }, [paused, aberto, n]);
 
   // Teclado (setas) e gesto de arrastar (swipe no celular)
   const onKeyDown = (e) => {
@@ -507,9 +679,16 @@ function Carousel() {
       )}
 
       <div className="carousel-title">
-        <span className="carousel-num">{cur.num}</span>
+        <span className="carousel-num">{cur.num}{cur.ano && <span className="carousel-year">{cur.ano}</span>}</span>
         <h3 className="carousel-name">{cur.nome}</h3>
         <p className="carousel-desc">{cur.desc}</p>
+        {cur.img && (
+          <button className="ver-projeto" onClick={() => setAberto(cur)}>
+            Ver projeto
+            {cur.fotos && cur.fotos.length > 1 && <span className="ver-n">{cur.fotos.length} fotos</span>}
+            <span className="arrow" />
+          </button>
+        )}
       </div>
 
       {n > 1 && (
@@ -519,6 +698,8 @@ function Carousel() {
           ))}
         </div>
       )}
+
+      {aberto && <Galeria projeto={aberto} onClose={() => setAberto(null)} />}
     </div>
   );
 }
@@ -530,12 +711,12 @@ function Projetos() {
         <div className="section-head reveal">
           <div className="head-left">
             <div className="section-eyebrow">
-              <span className="roman">III</span><span className="rule" /><span className="label">Projetos</span>
+              <span className="roman">IV</span><span className="rule" /><span className="label">Projetos</span>
             </div>
-            <h2 className="section-title">Trabalhos <em>selecionados</em></h2>
+            <h2 className="section-title">Projetos <em>recentes</em></h2>
           </div>
           <p className="section-lead">
-            Uma seleção de projetos de interiores e de ambientes da saúde — com passagens pelo residencial. Novos trabalhos entram aqui à medida que são entregues.
+            Um portfólio em construção: novos trabalhos entram aqui à medida que são entregues.
           </p>
         </div>
       </div>
@@ -555,7 +736,7 @@ function Escritos() {
         <div className="section-head reveal">
           <div className="head-left">
             <div className="section-eyebrow">
-              <span className="roman">IV</span><span className="rule" /><span className="label">Escritos</span>
+              <span className="roman">V</span><span className="rule" /><span className="label">Escritos</span>
             </div>
             <h2 className="section-title">Ideias <em>em texto</em></h2>
           </div>
@@ -591,11 +772,11 @@ function Contato() {
     <section className="section contato" id="contato">
       <div className="contato-inner">
         <div className="section-eyebrow contato-eyebrow reveal">
-          <span className="roman">V</span><span className="rule" /><span className="label">Contato</span>
+          <span className="roman">VI</span><span className="rule" /><span className="label">Contato</span>
         </div>
         <h2 className="contato-title reveal d1">Vamos conversar<br/>sobre o <em>seu projeto</em>.</h2>
         <p className="contato-lead reveal d2">
-          Conte um pouco sobre o espaço e o momento em que ele está. A primeira conversa é sem compromisso — e diz muito sobre o que dá para fazer.
+          Conte um pouco sobre o espaço e o momento em que ele está. A primeira conversa é sem compromisso — e diz muito sobre o que dá para fazer. Atendimento on-line para todo o Brasil e o exterior.
         </p>
 
         <div className="contato-actions reveal d2">
@@ -604,23 +785,27 @@ function Contato() {
             Chamar no WhatsApp
             <span className="arrow" />
           </a>
-          <a className="form-cta" href={FORM_LINK} target="_blank" rel="noopener">
-            Solicitar projeto
-            <span className="arrow" />
-          </a>
+          {FORM_LINK && (
+            <a className="form-cta" href={FORM_LINK} target="_blank" rel="noopener">
+              Solicitar projeto
+              <span className="arrow" />
+            </a>
+          )}
         </div>
 
         <div className="contato-secondary reveal d3">
           <div className="contato-block">
             <div className="block-label">WhatsApp</div>
             <a className="block-value" href={WA_LINK} target="_blank" rel="noopener">{WHATSAPP_HUMANO}</a>
-            <div className="block-sub">Resposta rápida, seg–sex</div>
+            <div className="block-sub">{ATENDIMENTO}</div>
           </div>
-          <div className="contato-block">
-            <div className="block-label">Formulário</div>
-            <a className="block-value" href={FORM_LINK} target="_blank" rel="noopener">Solicitação de projeto</a>
-            <div className="block-sub">Conte o essencial em 2 minutos</div>
-          </div>
+          {FORM_LINK && (
+            <div className="contato-block">
+              <div className="block-label">Formulário</div>
+              <a className="block-value" href={FORM_LINK} target="_blank" rel="noopener">Solicitação de projeto</a>
+              <div className="block-sub">Conte o essencial em 2 minutos</div>
+            </div>
+          )}
           <div className="contato-block">
             <div className="block-label">E-mail</div>
             <a className="block-value" href={`mailto:${EMAIL_PROFISSIONAL}`}>{EMAIL_PROFISSIONAL}</a>
@@ -633,8 +818,8 @@ function Contato() {
           </div>
           <div className="contato-block">
             <div className="block-label">Atuação</div>
-            <div className="block-value">Anápolis &amp; Goiânia</div>
-            <div className="block-sub">Projetos remotos sob consulta</div>
+            <div className="block-value">Brasil &amp; exterior</div>
+            <div className="block-sub">Presencial em Anápolis e Goiânia · on-line nos demais locais</div>
           </div>
         </div>
       </div>
@@ -649,8 +834,14 @@ function Footer() {
   return (
     <footer className="footer">
       <div className="footer-inner">
-        <span className="footer-logo">MARIA EDUARDA MARTINS</span>
-        <span className="footer-mini">© 2026 · Interiores &amp; Ambientes da Saúde</span>
+        <div className="footer-brand">
+          <MarcaDanaus className="footer-marca" />
+          <div>
+            <span className="footer-logo">DANAUS ARQUITETURA</span>
+            <span className="footer-slogan">{SLOGAN}</span>
+          </div>
+        </div>
+        <span className="footer-mini">© 2026 · Maria Eduarda Martins · CAU {CAU}</span>
         <div className="footer-social-group">
           <a className="footer-social" href={WA_LINK} target="_blank" rel="noopener" aria-label="WhatsApp">
             <IconWhats /> WhatsApp
@@ -676,6 +867,7 @@ function App() {
   );
 
   useRevealObserver();
+  useContador();
 
   useEffect(() => {
     const root = document.documentElement;
@@ -696,6 +888,7 @@ function App() {
       <Hero />
       <Marquee />
       <Sobre />
+      <Saude />
       <Processo />
       <Projetos />
       <Escritos />

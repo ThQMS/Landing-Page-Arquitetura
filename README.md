@@ -1,6 +1,6 @@
-# Maria Eduarda Martins — Arquitetura & Interiores
+# Danaus Arquitetura — Maria Eduarda Martins
 
-Site de apresentação (landing page) da arquiteta e urbanista **Maria Eduarda Martins**, com foco em design de interiores e ambientes da saúde (hospitais, clínicas e consultórios) em Anápolis, Goiânia e região. Projetos residenciais são atendidos sob demanda.
+Site de apresentação (landing page) da arquiteta e urbanista **Maria Eduarda Martins**, com foco em design de interiores e ambientes da saúde (hospitais, clínicas e consultórios). Atendimento presencial em Anápolis e Goiânia e on-line para todo o Brasil e o exterior. Projetos residenciais são atendidos sob demanda.
 
 **🔗 Site no ar:** https://thqms.github.io/Landing-Page-Arquitetura/
 
@@ -11,10 +11,11 @@ Site de apresentação (landing page) da arquiteta e urbanista **Maria Eduarda M
 Uma página única (one-page), em estilo editorial e sofisticado, pensada para transmitir a proposta da arquiteta: *arquitetura que resolve antes de ser bonita*. O visual combina tipografia clássica, uma paleta quente (travertino, terracota e champanhe) e animações discretas.
 
 ### Seções
-- **Início** — apresentação com chamada principal
-- **Sobre** — bio e números de atuação
+- **Início** — apresentação sobre uma parede de luz e sombra de folhas (no espírito da logo)
+- **Sobre** — bio, formação, registro no CAU e área de atendimento
+- **Ambientes da saúde** — o que um projeto para hospitais, clínicas e consultórios considera
 - **Processo** — as etapas de projeto (Escuta → Estudo → Projeto → Obra)
-- **Projetos** — carrossel de tela cheia com as fotos dos trabalhos
+- **Projetos** — carrossel de tela cheia; "Ver projeto" abre a galeria com todas as fotos (fotos em `fotos/`)
 - **Escritos** — artigos publicados no Substack
 - **Contato** — WhatsApp e redes
 
@@ -59,6 +60,14 @@ npm run watch
 ```
 
 Depois é só abrir o `index.html` no navegador.
+
+## Galeria de projetos
+
+Cada projeto em `CARROSSEL` (no `app.jsx`) tem `img` (capa) e `fotos` (lista que abre em "Ver projeto"). Para incluir mais fotos, salve em `fotos/` e acrescente na lista.
+
+## Contador de visitas (GoatCounter)
+
+Gratuito e sem cookies. Crie a conta em https://www.goatcounter.com/signup, escolha um código (ex.: `danaus`) e preencha `GOATCOUNTER` no topo do `app.jsx`. Além das visitas, ele conta cliques em WhatsApp, Instagram, e-mail e Substack.
 
 ## Publicar atualizações
 
