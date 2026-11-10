@@ -8,14 +8,15 @@ const WHATSAPP_HUMANO = "(62) 99308-5547";
 const WA_LINK = `https://api.whatsapp.com/send/?phone=${WHATSAPP}&text=${encodeURIComponent(
   "Oi, tudo bem? Gostaria de conversar sobre um projeto."
 )}`;
+// Instagram desativado por enquanto (fora do contato e do rodapé); reativar quando houver perfil novo.
 const INSTAGRAM = "https://www.instagram.com/eduarda.martinsarq";
 const INSTAGRAM_HANDLE = "@eduarda.martinsarq";
 const SUBSTACK = "https://danausarquitetura.substack.com";
 
-const EMAIL_PROFISSIONAL = "dumartins0304@gmail.com";
+const EMAIL_PROFISSIONAL = "danaus.arquitetura@gmail.com";
 // Link do formulário de solicitação de projeto. Vazio = o botão "Solicitar projeto" fica escondido.
-// Link provisório (Kiwify), a pedido — a cliente disse que é de outra coisa; trocar quando vier o link correto.
-const FORM_LINK = "https://pay.kiwify.com.br/45GfLZS";
+// Formulário de solicitação de projeto (Google Forms)
+const FORM_LINK = "https://docs.google.com/forms/d/e/1FAIpQLSdNmSkO1b5ppXMytg6n99yRfC9CWbeQaII0NkabaVfUja5_ug/viewform?usp=dialog";
 const CAU = "A321508-3";
 const ATENDIMENTO = "Seg. a sex. · 9h às 16h";
 const SLOGAN = "Se você pode sonhar, pode realizar.";
@@ -31,8 +32,8 @@ const WA_LINK_SAUDE = `https://api.whatsapp.com/send/?phone=${WHATSAPP}&text=${e
 
 // Palavras que giram na faixa (marquee)
 const MARQUEE = [
-  "Design de Interiores", "Ambientes da Saúde", "Clínicas", "Consultórios",
-  "Arquitetura Hospitalar", "Detalhamento", "Luz Natural", "Residencial",
+  "Design de Interiores", "Ambientes de Saúde", "Clínicas", "Consultórios",
+  "Arquitetura Hospitalar", "Detalhamento", "Residencial",
 ];
 
 // Etapas do processo de projeto
@@ -43,9 +44,9 @@ const PROCESSO = [
   { n: "04", nome: "Obra", desc: "Acompanhamento e curadoria de acabamentos, garantindo que o desenho vire realidade com o mesmo cuidado." },
 ];
 
-// Ambientes da saúde — o que um projeto para a área considera
+// Ambientes de saúde — o que um projeto para a área considera
 const SAUDE = [
-  { t: "Normas desde o início", d: "Projeto desenvolvido conforme a RDC 50 da Anvisa e a norma de acessibilidade NBR 9050, pensando desde o primeiro traço na aprovação junto à vigilância sanitária." },
+  { t: "Normas desde o início", d: "Projetos desenvolvidos conforme as normas hospitalares, pensando desde o primeiro traço até sua aprovação final." },
   { t: "Fluxos que funcionam", d: "Circulação de pacientes, equipe, materiais e resíduos organizada para evitar cruzamentos — mais segurança e uma rotina mais fluida para quem trabalha ali." },
   { t: "Materiais certos", d: "Revestimentos laváveis e resistentes à limpeza frequente, escolhidos sem abrir mão do aconchego e da identidade do espaço." },
   { t: "Acolhimento", d: "Luz, cor, acústica e mobiliário que diminuem a tensão de quem espera e transmitem confiança desde a recepção." },
@@ -78,7 +79,7 @@ const CARROSSEL = [
     ano: "2026",
     desc: "Um projeto que une beleza, funcionalidade e convivência. Pensado para integrar momentos compartilhados, com ambientes bem definidos e soluções que favorecem a organização e a praticidade no dia a dia, sem abrir mão do acolhimento.",
     img: "fotos/cozinha-viva.jpg",              // capa do carrossel
-    fotos: ["fotos/cozinha-viva.jpg"],         // galeria (abre em "Ver projeto") — acrescente mais fotos aqui
+    fotos: ["fotos/cozinha-viva.jpg", "fotos/cozinha-viva-2.jpg", "fotos/cozinha-viva-3.jpg"],         // galeria (abre em "Ver projeto") — acrescente mais fotos aqui
   },
 ];
 
@@ -555,7 +556,7 @@ function Hero() {
         <div className="hero-credentials">
           <span className="cred-hide">Maria Eduarda Martins <span className="cred-sep">/</span> </span>
           Arquiteta e Urbanista
-          <span className="cred-hide"> <span className="cred-sep">/</span> Interiores &amp; Ambientes da Saúde</span>
+          <span className="cred-hide"> <span className="cred-sep">/</span> Interiores &amp; Ambientes de Saúde</span>
         </div>
 
         <h1 className="hero-title">
@@ -567,7 +568,7 @@ function Hero() {
         <div className="hero-meta">
           <div>
             <p className="hero-tagline">
-              Design de interiores e ambientes da saúde pensados para a vida real — <em>fluxo, uso, luz e conforto</em>. A estética vem depois, como consequência.
+              Design de interiores e ambientes de saúde pensados para a vida real — <em>fluxo, uso, luz e conforto</em>. A estética vem depois, como consequência.
             </p>
             <a className="hero-cta" ref={cta} href={WA_LINK} target="_blank" rel="noopener">
               Comece com intenção <span className="arrow" />
@@ -635,20 +636,23 @@ function Sobre() {
         <div className="sobre-grid">
           <div className="sobre-text reveal d1">
             <p className="dropcap">
-              Projetar, para mim, começa antes do desenho: começa em entender como um espaço é usado todos os dias. Onde entra o sol, por onde se caminha, o que se guarda, o que se mostra.
+              Projetar, para mim, é compreender as necessidades de cada espaço e das pessoas que o utilizam. É observar a rotina, entender os usos, considerar os fluxos e traduzir tudo isso em ambientes funcionais, confortáveis e bem resolvidos.
             </p>
             <p>
-              Meu trabalho se concentra em <strong>design de interiores</strong> e em <strong>ambientes da saúde</strong> — hospitais, clínicas e consultórios. São espaços que exigem duas coisas ao mesmo tempo: acolher quem chega e funcionar para quem trabalha ali o dia inteiro. Fluxos, higiene, iluminação e conforto não são detalhes; são o projeto.
+              Minha atuação se concentra no <strong>design de interiores e na arquitetura para ambientes de saúde</strong>, com desenvolvimento de projetos para hospitais, clínicas e consultórios.
             </p>
             <p>
-              O atendimento é presencial em Anápolis e Goiânia e on-line para todo o Brasil e o exterior. <em>Projetos residenciais também são desenvolvidos sob demanda</em>: não são o foco principal, mas são bem-vindos quando fazem sentido.
+              Mais do que transformar espaços, meu trabalho consiste em encontrar soluções coerentes com cada realidade, respeitando as particularidades, os usos e as necessidades de cada ambiente.
+            </p>
+            <p>
+              Atendimento presencial em Anápolis e Goiânia, e on-line para todo o Brasil e o exterior.
             </p>
 
             <dl className="sobre-cred">
               <div><dt>Formação</dt><dd>Arquitetura e Urbanismo <span>· 2025</span></dd></div>
               <div><dt>Especialização</dt><dd>Arquitetura Hospitalar</dd></div>
               <div><dt>MBA</dt><dd>Gestão de Projetos</dd></div>
-              <div><dt>Registro</dt><dd>CAU {CAU}</dd></div>
+              <div><dt>Registro</dt><dd>{CAU}</dd></div>
             </dl>
           </div>
 
@@ -680,7 +684,7 @@ function Sobre() {
 }
 
 /* ============================================================
-   Ambientes da saúde
+   Ambientes de saúde
    ============================================================ */
 function Saude() {
   const cta = useMagnetico(0.3, 8, 5);
@@ -690,7 +694,7 @@ function Saude() {
         <div className="section-head reveal">
           <div className="head-left">
             <div className="section-eyebrow">
-              <span className="roman">II</span><span className="rule" /><span className="label">Ambientes da saúde</span>
+              <span className="roman">II</span><span className="rule" /><span className="label">Ambientes de saúde</span>
             </div>
             <h2 className="section-title">Cuidar começa<br/>pelo <em>espaço</em>.</h2>
           </div>
@@ -1033,20 +1037,15 @@ function Contato() {
           </div>
           {FORM_LINK && (
             <div className="contato-block">
-              <div className="block-label">Solicitação</div>
-              <a className="block-value" href={FORM_LINK} target="_blank" rel="noopener">Solicitar projeto</a>
-              <div className="block-sub">Abre em uma nova página</div>
+              <div className="block-label">Formulário</div>
+              <a className="block-value" href={FORM_LINK} target="_blank" rel="noopener">Solicitação de projeto</a>
+              <div className="block-sub">Conte o essencial em 2 minutos</div>
             </div>
           )}
           <div className="contato-block">
             <div className="block-label">E-mail</div>
             <a className="block-value" href={`mailto:${EMAIL_PROFISSIONAL}`}>{EMAIL_PROFISSIONAL}</a>
             <div className="block-sub">Maria Eduarda Martins</div>
-          </div>
-          <div className="contato-block">
-            <div className="block-label">Instagram</div>
-            <a className="block-value" href={INSTAGRAM} target="_blank" rel="noopener">{INSTAGRAM_HANDLE}</a>
-            <div className="block-sub">Bastidores e projetos</div>
           </div>
           <div className="contato-block">
             <div className="block-label">Atuação</div>
@@ -1077,9 +1076,6 @@ function Footer() {
         <div className="footer-social-group">
           <a className="footer-social" href={WA_LINK} target="_blank" rel="noopener" aria-label="WhatsApp">
             <IconWhats /> WhatsApp
-          </a>
-          <a className="footer-social" href={INSTAGRAM} target="_blank" rel="noopener" aria-label="Instagram">
-            <IconInsta /> Instagram
           </a>
           <a className="footer-social" href={SUBSTACK} target="_blank" rel="noopener" aria-label="Substack">
             <IconSubstack /> Substack
